@@ -1,7 +1,5 @@
 package donnees;
 
-import java.util.ArrayList;
-
 /**
  * 
  * @author bruno
@@ -9,16 +7,15 @@ import java.util.ArrayList;
  */
 
 public class Capteur {
-	
-	private CapteursTableModel capteursTable;
-	private ArrayList<CapteursTableModel> modele = new ArrayList<>();
-	protected double SEUIL_MIN; //Je ne sais pas si c'est le meme pour des capteurs de different type
-	protected double SEUIL_MAX; 
+	private CapteursTableModel capteursTableModel;
+	private double seuilMin;
+	private double seuilMax; 
 	private String nom;
 	private String batiment;
 	private String lieu;
 	private int etage;
 	private TypeCapteur type;
+	private double valeur;
 	
 	/**
 	 * @param nom
@@ -34,9 +31,58 @@ public class Capteur {
 		this.lieu = lieu;
 		this.etage = etage;
 		this.type = type;
+		this.seuilMin = type.getSeuilMin();
+		this.seuilMax = type.getSeuilMax();
+	}
+
+	public double getSeuilMin() {
+		return seuilMin;
+	}
+
+	public double getSeuilMax() {
+		return seuilMax;
+	}
+
+	public void setSeuilMin(double seuilMin) {
+		this.seuilMin = seuilMin;
+	}
+
+	public void setSeuilMax(double seuilMax) {
+		this.seuilMax = seuilMax;
 	}
 	
-		
+	public String getNom() {
+		return nom;
+	}
+
+	public String getBatiment() {
+		return batiment;
+	}
+
+	public String getLieu() {
+		return lieu;
+	}
+
+	public int getEtage() {
+		return etage;
+	}
 	
+	public double getValeur() {
+		return valeur;
+	}
+
+	public TypeCapteur getType() {
+		return type;
+	}
+
+	public void setModele(CapteursTableModel modele) {
+		capteursTableModel = modele;
+	}
 	
+	public void actualiserValeur(double valeur) {
+		this.valeur = valeur;
+		if (capteursTableModel != null) {
+			capteursTableModel.fireTableDataChanged();
+		}
+	}
 }
