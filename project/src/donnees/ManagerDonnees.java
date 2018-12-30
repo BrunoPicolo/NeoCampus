@@ -24,8 +24,9 @@ public class ManagerDonnees {
 	 * @param identifiant
 	 * @param motDePasse
 	 */
+	// TODO Creer un classe BD que l'on donnerait en parametre ? Creation du hashset dans le constructeur ?
 	public ManagerDonnees(String adresse, String identifiant, String motDePasse,
-			LinkedHashSet<Capteur> capteursConnectes) {
+			LinkedHashSet<Capteur> capteursConnectes) { 
 		super();
 		this.adresse = adresse;
 		this.identifiant = identifiant;
@@ -75,7 +76,11 @@ public class ManagerDonnees {
 		return capteursConnectes;
 	}
 	
-	public void deconnecterCapteur(Capteur capteur) {
-		capteursConnectes.remove(capteur);
+	public void deconnecterCapteur(String nomCapteur) {
+		for(Capteur capteur : capteursConnectes) {
+			if (capteur.getNom().equals(nomCapteur)) {
+				capteursConnectes.remove(capteur);
+			}
+		}
 	}
 }

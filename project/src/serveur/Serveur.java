@@ -3,27 +3,33 @@
  */
 package serveur;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+
 import donnees.ManagerDonnees;
 
 /**
  * @author bruno
  *
  */
-public class Serveur {
-	private ManagerDonnees managersDonnees;
-	private String adresse;
+public class Serveur implements Runnable {
+	private ManagerDonnees managerDonnees;
+	private String adresse; // TODO supprimer l'adresse ?
 	private int port;
-	private boolean connexion = false;
 	
 	
 	/**
-	 * @param managersDonnes
+	 * @param managerDonnes
 	 * @param adresse
 	 * @param port
 	 */
-	public Serveur(ManagerDonnees managersDonnees, String adresse, int port) {
+	public Serveur(ManagerDonnees managerDonnees, String adresse, int port) {
 		super();
-		this.managersDonnees = managersDonnees;
+		this.managerDonnees = managerDonnees;
 		this.adresse = adresse;
 		this.port = port;
 	}
@@ -33,7 +39,26 @@ public class Serveur {
 	 * @return
 	 */
 	public boolean deconnexion() {
-		boolean cx = false; // demander traitement de managerDonnees
-		return cx;
+		// TODO utile ?
+		return false;
+	}
+
+	@Override
+	public void run() {
+		ServerSocket serveur;
+		Socket client;
+		try {
+			serveur = new ServerSocket(port);
+			do {
+				client = serveur.accept();
+				traiterConnexion(client);
+			} while (true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void traiterConnexion(Socket client) {
+		new Thread(new TraitementCapteur(client, managerDonnees)).start();
 	}
 }
