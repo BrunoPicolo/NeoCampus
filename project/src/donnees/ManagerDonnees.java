@@ -5,9 +5,8 @@ package donnees;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
-import java.util.NavigableSet;
-import java.util.TreeSet;
 
 /**
  * @author bruno
@@ -16,7 +15,7 @@ import java.util.TreeSet;
 public class ManagerDonnees {
 	
 	private Connection connectionBD;
-	private NavigableSet<Capteur> capteurConnectes;
+	private HashSet<Capteur> capteurConnectes;
 	private String adresse;
 	private String identifiant;
 	private String motDePasse;
@@ -30,7 +29,7 @@ public class ManagerDonnees {
 		this.adresse = adresse;
 		this.identifiant = identifiant;
 		this.motDePasse = motDePasse;
-		this.capteurConnectes = new TreeSet<>();
+		this.capteurConnectes = new HashSet<>();
 	}
 	
 	/**
@@ -63,21 +62,27 @@ public class ManagerDonnees {
 		//TODO demander a capteursTableModel les valeurs pendant la periode
 		return mesures;
 	}
-	
-	public List<TypeCapteur> getCapteursBD(TypeCapteur type){
-		List<TypeCapteur> capteurs = new ArrayList<>();
-		//TODO meme chose que methode precedente
+	/**
+	 *REVISER, je crois que ce n'est pas bon
+	 */
+	public List<Capteur> getCapteursBD(TypeCapteur type){
+		List<Capteur> capteurs = new ArrayList<>();
+		for (Capteur c : capteurConnectes) {
+			if (c.getType().equals(type)) {
+				capteurs.add(c);
+			}
+		}
 		return capteurs;
 	}
 	
-	public List<TypeCapteur> getCapteursConnectes(){
-		List<TypeCapteur> capteurs = new ArrayList<>();
-		//TODO meme chose que methode precedente
+	public List<Capteur> getCapteursConnectes(){
+		List<Capteur> capteurs = new ArrayList<>();
+		capteurs.addAll(capteurConnectes);
 		return capteurs;
 	}
 	
 	public void deconnecterCapteur(Capteur capteur) {
-		
+		capteurConnectes.remove(capteur);
 	}
 	
 }
