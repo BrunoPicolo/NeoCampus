@@ -5,7 +5,6 @@ package donnees;
  * @author bruno
  *
  */
-
 public class Capteur {
 	private CapteursTableModel capteursTableModel;
 	private double seuilMin;
@@ -84,5 +83,10 @@ public class Capteur {
 		if (capteursTableModel != null) {
 			capteursTableModel.fireTableDataChanged();
 		}
+	}
+	
+	@Override
+	public int hashCode() {
+		return 31 * (nom.hashCode() + batiment.hashCode() + etage + lieu.hashCode());
 	}
 }

@@ -5,7 +5,7 @@ package donnees;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -13,23 +13,24 @@ import java.util.List;
  *
  */
 public class ManagerDonnees {
-	
-	private Connection connectionBD;
-	private HashSet<Capteur> capteurConnectes;
+	// TODO champ représentant la connexion BD
+	private LinkedHashSet<Capteur> capteursConnectes;
 	private String adresse;
 	private String identifiant;
 	private String motDePasse;
+	
 	/**
 	 * @param adresse
 	 * @param identifiant
 	 * @param motDePasse
 	 */
-	public ManagerDonnees(String adresse, String identifiant, String motDePasse) {
+	public ManagerDonnees(String adresse, String identifiant, String motDePasse,
+			LinkedHashSet<Capteur> capteursConnectes) {
 		super();
 		this.adresse = adresse;
 		this.identifiant = identifiant;
 		this.motDePasse = motDePasse;
-		this.capteurConnectes = new HashSet<>();
+		this.capteursConnectes = capteursConnectes;
 	}
 	
 	/**
@@ -38,12 +39,13 @@ public class ManagerDonnees {
 	 * @param valeur
 	 */
 	public void actualiserValeurCapteur(String nomCapteur, double valeur) {
-		for(Capteur capteur : capteurConnectes) {
+		for(Capteur capteur : capteursConnectes) {
 			if (capteur.getNom().equals(nomCapteur)) {
 				capteur.actualiserValeur(valeur);
 			}
 		}
 	}
+	
 	/**
 	 * 
 	 * @param nom
@@ -54,35 +56,26 @@ public class ManagerDonnees {
 	 */
 	public void connecterCapteur(String nom, String batiment, String lieu, int etage, TypeCapteur type) {
 		Capteur capteur = new Capteur(nom, batiment, lieu, etage, type);
-		capteurConnectes.add(capteur);
+		capteursConnectes.add(capteur);
 	}
 	
 	public List<Double> mesuresPeriode(Capteur capteur, Date dateMin, Date DateMax) {
 		List<Double> mesures = new ArrayList<>();
-		//TODO demander a capteursTableModel les valeurs pendant la periode
+		//TODO demander a la BD
 		return mesures;
 	}
-	/**
-	 *REVISER, je crois que ce n'est pas bon
-	 */
+	
 	public List<Capteur> getCapteursBD(TypeCapteur type){
 		List<Capteur> capteurs = new ArrayList<>();
-		for (Capteur c : capteurConnectes) {
-			if (c.getType().equals(type)) {
-				capteurs.add(c);
-			}
-		}
+		// TODO demander a la BD
 		return capteurs;
 	}
 	
-	public List<Capteur> getCapteursConnectes(){
-		List<Capteur> capteurs = new ArrayList<>();
-		capteurs.addAll(capteurConnectes);
-		return capteurs;
+	public LinkedHashSet<Capteur> getCapteursConnectes() {
+		return capteursConnectes;
 	}
 	
 	public void deconnecterCapteur(Capteur capteur) {
-		capteurConnectes.remove(capteur);
+		capteursConnectes.remove(capteur);
 	}
-	
 }

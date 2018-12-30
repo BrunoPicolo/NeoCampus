@@ -10,7 +10,6 @@ import donnees.ManagerDonnees;
  *
  */
 public class Serveur {
-	
 	private ManagerDonnees managersDonnees;
 	private String adresse;
 	private int port;
@@ -37,15 +36,4 @@ public class Serveur {
 		boolean cx = false; // demander traitement de managerDonnees
 		return cx;
 	}
-
-
-
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO server main
-	}
-
 }
