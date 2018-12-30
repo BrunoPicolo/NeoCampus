@@ -5,7 +5,6 @@ package donnees;
  * @author bruno
  *
  */
-
 public class Capteur {
 	private CapteursTableModel capteursTableModel;
 	private double seuilMin;

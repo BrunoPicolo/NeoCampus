@@ -1,9 +1,11 @@
 /**
  * 
  */
-package donnees;
+package ihm;
 
 import java.util.List;
+
+import donnees.Capteur;
 
 /**
  * @author bruno

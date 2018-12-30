@@ -4,7 +4,7 @@
 package donnees;
 
 import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
 /**
  * @author bruno
@@ -13,9 +13,9 @@ import java.util.ArrayList;
 public class CapteursTableModel extends AbstractTableModel {
 	private static final int COL_NUM = 6;
 	
-	private ArrayList<Capteur> listeCapteurs;
+	private LinkedHashSet<Capteur> listeCapteurs;
 	
-	public CapteursTableModel(ArrayList<Capteur> listeCapteurs) {
+	public CapteursTableModel(LinkedHashSet<Capteur> listeCapteurs) {
 		this.listeCapteurs = listeCapteurs;
 	}
 	
@@ -59,21 +59,31 @@ public class CapteursTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int ligne, int colonne) {
-		Capteur capteur = listeCapteurs.get(ligne);
+		Capteur capteur = null;
+		int i = 0;
+		for (Capteur c : listeCapteurs) {
+			if (i == ligne) {
+				capteur = c;
+				break;
+			}
+			i++;
+		}
 		
-		switch (colonne) {
-			case 0:
-				return capteur.getNom();
-			case 1:
-				return capteur.getType().toString();
-			case 2:
-				return capteur.getBatiment();
-			case 3:
-				return capteur.getEtage();
-			case 4:
-				return capteur.getLieu();
-			case 5:
-				return capteur.getValeur();
+		if (capteur != null) {
+			switch (colonne) {
+				case 0:
+					return capteur.getNom();
+				case 1:
+					return capteur.getType().toString();
+				case 2:
+					return capteur.getBatiment();
+				case 3:
+					return capteur.getEtage();
+				case 4:
+					return capteur.getLieu();
+				case 5:
+					return capteur.getValeur();
+			}
 		}
 		
 		return null;
