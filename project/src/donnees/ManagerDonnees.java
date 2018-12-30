@@ -13,8 +13,6 @@ import java.util.List;
  *
  */
 public class ManagerDonnees {
-	
-	private Connection connectionBD;
 	private HashSet<Capteur> capteurConnectes;
 	private String adresse;
 	private String identifiant;

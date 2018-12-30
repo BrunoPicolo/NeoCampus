@@ -85,4 +85,9 @@ public class Capteur {
 			capteursTableModel.fireTableDataChanged();
 		}
 	}
+	
+	@Override
+	public int hashCode() {
+		return 31 * (nom.hashCode() + batiment.hashCode() + etage + lieu.hashCode());
+	}
 }
