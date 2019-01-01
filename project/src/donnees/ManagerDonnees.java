@@ -4,20 +4,23 @@
 package donnees;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.sql.*;
 
 /**
  * @author bruno
  *
  */
 public class ManagerDonnees {
-	// TODO champ représentant la connexion BD
+	private Connection connexionBD;
 	private LinkedHashSet<Capteur> capteursConnectes;
 	private String adresse;
 	private String identifiant;
 	private String motDePasse;
+	private CapteursTableModel capteursTableModel;
 	
 	/**
 	 * @param adresse
@@ -26,12 +29,24 @@ public class ManagerDonnees {
 	 */
 	// TODO Creer un classe BD que l'on donnerait en parametre ? Creation du hashset dans le constructeur ?
 	public ManagerDonnees(String adresse, String identifiant, String motDePasse,
-			LinkedHashSet<Capteur> capteursConnectes) { 
+			LinkedHashSet<Capteur> capteursConnectes, CapteursTableModel capteursTableModel) { 
 		super();
 		this.adresse = adresse;
 		this.identifiant = identifiant;
 		this.motDePasse = motDePasse;
 		this.capteursConnectes = capteursConnectes;
+		this.capteursTableModel = capteursTableModel;
+		try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+            throw new Error("Probleme chargement driver: " + e.getMessage());
+        }
+		try {
+			this.connexionBD = DriverManager.getConnection("jdbc:mysql://" + adresse + "/NeoCampus",
+					identifiant, motDePasse);
+		} catch (SQLException e) {
+			throw new Error("Probleme connexion BD: " + e.getMessage());
+		}
 	}
 	
 	/**
@@ -40,9 +55,22 @@ public class ManagerDonnees {
 	 * @param valeur
 	 */
 	public void actualiserValeurCapteur(String nomCapteur, double valeur) {
+		String requete = "INSERT INTO Releves VALUES (NULL, ?, ?, ?)";
+		
 		for(Capteur capteur : capteursConnectes) {
 			if (capteur.getNom().equals(nomCapteur)) {
 				capteur.actualiserValeur(valeur);
+				try {
+					PreparedStatement s = connexionBD.prepareStatement(requete);
+					s.setString(1, nomCapteur);
+					s.setDouble(2, valeur);
+					Calendar cal = Calendar.getInstance();
+					s.setDate(3, new java.sql.Date(cal.getTimeInMillis()));
+					s.executeUpdate();
+					s.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -56,19 +84,55 @@ public class ManagerDonnees {
 	 * @param type
 	 */
 	public void connecterCapteur(String nom, String batiment, String lieu, int etage, TypeCapteur type) {
+		String requete = "INSERT IGNORE INTO Releves VALUES (?, ?, ?, ?, ?, ?, ?)";
+		
 		Capteur capteur = new Capteur(nom, batiment, lieu, etage, type);
 		capteursConnectes.add(capteur);
+		try {
+			PreparedStatement s = connexionBD.prepareStatement(requete);
+			s.setString(1, nom);
+			s.setString(2, type.toString());
+			s.setString(3, batiment);
+			s.setInt(4, etage);
+			s.setString(5, lieu);
+			s.setDouble(6, type.getSeuilMin());
+			s.setDouble(7, type.getSeuilMax());
+			s.executeUpdate();
+			s.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public List<Double> mesuresPeriode(Capteur capteur, Date dateMin, Date DateMax) {
 		List<Double> mesures = new ArrayList<>();
-		//TODO demander a la BD
+		// TODO
 		return mesures;
 	}
 	
-	public List<Capteur> getCapteursBD(TypeCapteur type){
+	public List<Capteur> getCapteursBD(){
+		String requete = "SELECT * FROM Capteurs";
 		List<Capteur> capteurs = new ArrayList<>();
-		// TODO demander a la BD
+		
+		try {
+			Statement s = connexionBD.createStatement();
+			ResultSet res = s.executeQuery(requete);
+			while (res.next()) {
+				Capteur capteur = new Capteur(
+					res.getString("NomCapteur"),
+					res.getString("Batiment"),
+					res.getString("LieuDetails"),
+					res.getInt("Etage"),
+					TypeCapteur.valueOf(res.getString("NomFluide"))
+				);
+				capteur.setSeuilMin(res.getDouble("SeuilMin"));
+				capteur.setSeuilMax(res.getDouble("SeuilMax"));
+				capteurs.add(capteur);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
 		return capteurs;
 	}
 	

@@ -2,5 +2,6 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="C:/Users/Elyan/Documents/L3/ProjetS5/Workspace/NeoCampus/mysql-connector-java.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
