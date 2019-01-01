@@ -27,13 +27,8 @@ import donnees.ManagerDonnees;
 public class ManagerIHM {
 	private static final int DEFAULT_PORT = 8952;
 	private ManagerDonnees managerDonnees;
-	private static int port;
-	private static Object[][] donneesCapteurs = {
-			{"Capteur","Fluide","Batiment","Etage","Lieu","Seuil min","Seuil max"},
-			{"Capteur","Fluide","Batiment","Etage","Lieu","Seuil min","Seuil max"},
-			{"Capteur","Fluide","Batiment","Etage","Lieu","Seuil min","Seuil max"},
-			{"Capteur","Fluide","Batiment","Etage","Lieu","Seuil min","Seuil max"}
-		    };
+	private static int portDEcouteCapteurs;
+	private static Object[][] donneesCapteurs = {}; //données produites par la liste de CapteursTable model
 	private int nbCapteurs = 0;
 	private static final String[] entete = {"Capteur","Fluide","Batiment","Etage","Lieu","Seuil min","Seuil max"};
 	
@@ -51,45 +46,66 @@ public class ManagerIHM {
 		String strPort = JOptionPane.showInputDialog(connexion,
 				"Numéro de port:", DEFAULT_PORT);
 		if (strPort == null) 
-			port = DEFAULT_PORT;
+			portDEcouteCapteurs = DEFAULT_PORT;
 		else
-			port = Integer.parseInt(strPort);
+			portDEcouteCapteurs = Integer.parseInt(strPort);
 		connexion.dispose();
+	}
+	/**
+	 * 
+	 * @return
+	 */
+	private static JPanel analyseurTempsReel() {
+		JPanel panel = new JPanel(new BorderLayout());
+		JLabel titre = new JLabel("Analyseur Temps Réel");
+		JTable tableau = new JTable(donneesCapteurs,entete);
+		Box titreBox= new Box(BoxLayout.X_AXIS); //set a definir la separation entre le titre et le tableau
+		
+		titreBox.add(titre);
+		titreBox.add(Box.createVerticalStrut(30));
+		
+		panel.add(titreBox, BorderLayout.PAGE_START);
+		panel.add(new JScrollPane(tableau),BorderLayout.CENTER);
+		return panel;
+	}
+	/**
+	 * 
+	 * @return
+	 */
+	private static JPanel analyseurDonnees() {
+		JPanel panel = new JPanel(new BorderLayout());
+		JLabel titre = new JLabel("Analyseur De Données");
+		
+		panel.add(titre,BorderLayout.PAGE_START);
+		return panel;
+	}
+	/**
+	 * 
+	 * @return
+	 */
+	private static JPanel arborescenceCapteurs() {
+		JPanel panel = new JPanel(new BorderLayout());
+		JLabel titreAC = new JLabel("Arborescence Capteurs");
+		
+		panel.add(titreAC,BorderLayout.PAGE_START);
+		return panel;
 	}
 	
 	private static void fenetrePrincipale() {
-//		Composant principaux
 		JFrame frame = new JFrame("NeoCampus");
 		JPanel base = new JPanel(new BorderLayout());
 		JPanel analysePanel = new JPanel(new BorderLayout());
+		Box acContaier = new Box(BoxLayout.X_AXIS);//sert de container, je l'utilise dans ce cas pour definir une separation entre deux jpanel
+		JPanel arborescence = arborescenceCapteurs();
+		JPanel donnees = analyseurDonnees();
+		JPanel tempsReel = analyseurTempsReel();
 		
-		JPanel arborescenceCapteurs = new JPanel(new BorderLayout());
-		JPanel analyseurDonnees = new JPanel(new BorderLayout());
-		JPanel analyseTempsReel = new JPanel(new BorderLayout());
-		
-		base.add(arborescenceCapteurs, BorderLayout.LINE_START);
-		
+		acContaier.add(arborescence);
+		acContaier.add(Box.createHorizontalStrut(50));
 		base.add(analysePanel,BorderLayout.CENTER);
-	
-		analysePanel.add(analyseurDonnees,BorderLayout.PAGE_START);
-		analysePanel.add(analyseTempsReel,BorderLayout.PAGE_END);
-		
-		
-//		analyseTempsReel arrangement des composants 
-		JLabel titreATR = new JLabel("Analyseur Temps Réel");
-		JTable tableau = new JTable(donneesCapteurs,entete);
-		
-		analyseTempsReel.add(titreATR, BorderLayout.PAGE_START);
-		analyseTempsReel.add(new JScrollPane(tableau),BorderLayout.CENTER); 
-		//analyseTempsReel.add(tableau,BorderLayout.CENTER); //Pour afficher les données, Erreur si 0 capteurs
-		
-//		analyseur De Données arrangement des composants
-		JLabel titreAD = new JLabel("Analyseur De Données");
-		analyseurDonnees.add(titreAD,BorderLayout.PAGE_START);
-		
-//		arborescence  de capteurs arrangement des composants
-		JLabel titreAC = new JLabel("Arborescence Capteurs");
-		arborescenceCapteurs.add(titreAC,BorderLayout.PAGE_START);
+		base.add(acContaier, BorderLayout.LINE_START);
+		analysePanel.add(donnees,BorderLayout.PAGE_START);
+		analysePanel.add(tempsReel,BorderLayout.PAGE_END);
 		
 //		JFrame parametrage
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
