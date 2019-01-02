@@ -3,10 +3,14 @@
  */
 package ihm;
 
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics2D;
 import java.awt.Toolkit;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.LinkedHashSet;
 
 import javax.swing.Box;
@@ -22,8 +26,22 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 
+import donnees.Capteur;
 import donnees.CapteursTableModel;
 import donnees.ManagerDonnees;
+
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot3D;
+import org.jfree.chart.plot.Plot;
+import org.jfree.chart.plot.PlotRenderingInfo;
+import org.jfree.chart.plot.PlotState;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
+import org.jfree.util.Rotation;
+
 
 /**
  * @author bruno
@@ -33,8 +51,7 @@ public class ManagerIHM {
 	private static final int DEFAULT_PORT = 8952;
 	private ManagerDonnees managerDonnees;
 	private static int portDEcouteCapteurs;
-	private static CapteursTableModel tableCateurs = new CapteursTableModel(new LinkedHashSet<>());
-	private int nbCapteurs = 0;
+	private static CapteursTableModel tableCateurs = new CapteursTableModel(new LinkedHashSet<Capteur>());
 	
 	/**
 	 * 
@@ -79,7 +96,11 @@ public class ManagerIHM {
 	private static JPanel analyseurDonnees() {
 		JPanel panel = new JPanel(new BorderLayout());
 		JLabel titre = new JLabel("Analyseur De Données");
-		
+
+		Box titreBox = new Box(BoxLayout.Y_AXIS);
+		titreBox.add(titre);
+		titreBox.add(Box.createVerticalGlue());
+			
 		panel.add(titre,BorderLayout.PAGE_START);
 		return panel;
 	}
