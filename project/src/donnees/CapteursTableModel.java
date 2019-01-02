@@ -16,6 +16,7 @@ public class CapteursTableModel extends AbstractTableModel {
 	private LinkedHashSet<Capteur> listeCapteurs;
 	
 	public CapteursTableModel(LinkedHashSet<Capteur> listeCapteurs) {
+		super();
 		this.listeCapteurs = listeCapteurs;
 	}
 	
@@ -46,7 +47,7 @@ public class CapteursTableModel extends AbstractTableModel {
 				nom = "Lieu";
 				break;
 			case 5:
-				nom = "Dernière mesure";
+				nom = "Mesure";
 		}
 		
 		return nom;
