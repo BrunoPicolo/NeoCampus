@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Toolkit;
+import java.util.LinkedHashSet;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -17,7 +18,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeModel;
 
+import donnees.CapteursTableModel;
 import donnees.ManagerDonnees;
 
 /**
@@ -28,9 +33,8 @@ public class ManagerIHM {
 	private static final int DEFAULT_PORT = 8952;
 	private ManagerDonnees managerDonnees;
 	private static int portDEcouteCapteurs;
-	private static Object[][] donneesCapteurs = {}; //données produites par la liste de CapteursTable model
+	private static CapteursTableModel tableCateurs = new CapteursTableModel(new LinkedHashSet<>());
 	private int nbCapteurs = 0;
-	private static final String[] entete = {"Capteur","Fluide","Batiment","Etage","Lieu","Seuil min","Seuil max"};
 	
 	/**
 	 * 
@@ -58,11 +62,11 @@ public class ManagerIHM {
 	private static JPanel analyseurTempsReel() {
 		JPanel panel = new JPanel(new BorderLayout());
 		JLabel titre = new JLabel("Analyseur Temps Réel");
-		JTable tableau = new JTable(donneesCapteurs,entete);
-		Box titreBox= new Box(BoxLayout.X_AXIS); //set a definir la separation entre le titre et le tableau
+		JTable tableau = new JTable(tableCateurs);
+		Box titreBox= new Box(BoxLayout.Y_AXIS); //set a definir la separation entre le titre et le tableau
 		
 		titreBox.add(titre);
-		titreBox.add(Box.createVerticalStrut(30));
+		titreBox.add(Box.createVerticalStrut(10));
 		
 		panel.add(titreBox, BorderLayout.PAGE_START);
 		panel.add(new JScrollPane(tableau),BorderLayout.CENTER);
@@ -85,9 +89,14 @@ public class ManagerIHM {
 	 */
 	private static JPanel arborescenceCapteurs() {
 		JPanel panel = new JPanel(new BorderLayout());
-		JLabel titreAC = new JLabel("Arborescence Capteurs");
-		
-		panel.add(titreAC,BorderLayout.PAGE_START);
+		Box titreBox = new Box(BoxLayout.Y_AXIS);
+		JLabel titre = new JLabel("Arborescence Capteurs");
+		JTree arbre = new JTree();
+
+		titreBox.add(titre);
+		titreBox.add(Box.createVerticalStrut(10));
+		panel.add(titreBox,BorderLayout.PAGE_START);
+		panel.add(arbre);
 		return panel;
 	}
 	
@@ -95,7 +104,7 @@ public class ManagerIHM {
 		JFrame frame = new JFrame("NeoCampus");
 		JPanel base = new JPanel(new BorderLayout());
 		JPanel analysePanel = new JPanel(new BorderLayout());
-		Box acContaier = new Box(BoxLayout.X_AXIS);//sert de container, je l'utilise dans ce cas pour definir une separation entre deux jpanel
+		Box acContaier = new Box(BoxLayout.X_AXIS);
 		JPanel arborescence = arborescenceCapteurs();
 		JPanel donnees = analyseurDonnees();
 		JPanel tempsReel = analyseurTempsReel();
