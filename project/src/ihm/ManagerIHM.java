@@ -22,30 +22,35 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 
+import donnees.Capteur;
 import donnees.CapteursTableModel;
 import donnees.ManagerDonnees;
+import serveur.Serveur;
 
 /**
  * @author bruno
  *
  */
-public class ManagerIHM {
+public class ManagerIHM implements Runnable {
 	private static final int DEFAULT_PORT = 8952;
+	
+	private int portDEcouteCapteurs;
 	private ManagerDonnees managerDonnees;
-	private static int portDEcouteCapteurs;
-	private static CapteursTableModel tableCateurs = new CapteursTableModel(new LinkedHashSet<>());
+	private CapteursTableModel capteursTableModel;
 	private int nbCapteurs = 0;
+	private Serveur serveur;
 	
 	/**
 	 * 
 	 * @param managerDonnees
 	 */
-	public ManagerIHM(ManagerDonnees managerDonnees) {
+	public ManagerIHM(ManagerDonnees managerDonnees, CapteursTableModel capteursTableModel) {
 		this.managerDonnees = managerDonnees;
+		this.capteursTableModel = capteursTableModel;
 	}
 	
 	// TODO changer le titre en "Port d'écoute des capteurs" ?
-	private static void fenetreDeConnexion() {
+	private void fenetreDeConnexion() {
 		JFrame connexion = new JFrame("Connexion");
 		String strPort = JOptionPane.showInputDialog(connexion,
 				"Numéro de port:", DEFAULT_PORT);
@@ -59,10 +64,10 @@ public class ManagerIHM {
 	 * 
 	 * @return
 	 */
-	private static JPanel analyseurTempsReel() {
+	private JPanel analyseurTempsReel() {
 		JPanel panel = new JPanel(new BorderLayout());
 		JLabel titre = new JLabel("Analyseur Temps Réel");
-		JTable tableau = new JTable(tableCateurs);
+		JTable tableau = new JTable(capteursTableModel);
 		Box titreBox= new Box(BoxLayout.Y_AXIS); //set a definir la separation entre le titre et le tableau
 		
 		titreBox.add(titre);
@@ -76,7 +81,7 @@ public class ManagerIHM {
 	 * 
 	 * @return
 	 */
-	private static JPanel analyseurDonnees() {
+	private JPanel analyseurDonnees() {
 		JPanel panel = new JPanel(new BorderLayout());
 		JLabel titre = new JLabel("Analyseur De Données");
 		
@@ -87,7 +92,7 @@ public class ManagerIHM {
 	 * 
 	 * @return
 	 */
-	private static JPanel arborescenceCapteurs() {
+	private JPanel arborescenceCapteurs() {
 		JPanel panel = new JPanel(new BorderLayout());
 		Box titreBox = new Box(BoxLayout.Y_AXIS);
 		JLabel titre = new JLabel("Arborescence Capteurs");
@@ -100,7 +105,7 @@ public class ManagerIHM {
 		return panel;
 	}
 	
-	private static void fenetrePrincipale() {
+	private void fenetrePrincipale() {
 		JFrame frame = new JFrame("NeoCampus");
 		JPanel base = new JPanel(new BorderLayout());
 		JPanel analysePanel = new JPanel(new BorderLayout());
@@ -127,15 +132,24 @@ public class ManagerIHM {
 		
 	}
 	
+	public void run() {
+		fenetreDeConnexion();
+		// Mise en route du serveur
+		serveur = new Serveur(managerDonnees, "127.0.0.1", portDEcouteCapteurs);
+		Thread threadServeur = new Thread(serveur);
+		threadServeur.start();
+		fenetrePrincipale();
+	}
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-//				fenetreDeConnexion();
-				fenetrePrincipale();
-			}
-		});
+		LinkedHashSet<Capteur> listeCapteurs = new LinkedHashSet<>();
+		CapteursTableModel capteursTableModel = new CapteursTableModel(listeCapteurs);
+		ManagerDonnees managerDonnees = new ManagerDonnees("localhost:3306", "root", "",
+				listeCapteurs, capteursTableModel);
+		
+		javax.swing.SwingUtilities.invokeLater(new ManagerIHM(managerDonnees, capteursTableModel));
 	}
 }

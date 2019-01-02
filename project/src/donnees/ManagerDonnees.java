@@ -6,8 +6,10 @@ package donnees;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.TimeZone;
 import java.sql.*;
 
 /**
@@ -37,12 +39,13 @@ public class ManagerDonnees {
 		this.capteursConnectes = capteursConnectes;
 		this.capteursTableModel = capteursTableModel;
 		try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (Exception e) {
             throw new Error("Probleme chargement driver: " + e.getMessage());
         }
 		try {
-			this.connexionBD = DriverManager.getConnection("jdbc:mysql://" + adresse + "/NeoCampus",
+			this.connexionBD = DriverManager.getConnection("jdbc:mysql://" + adresse 
+					+ "/NeoCampus?serverTimezone=" + TimeZone.getDefault().getID(),
 					identifiant, motDePasse);
 		} catch (SQLException e) {
 			throw new Error("Probleme connexion BD: " + e.getMessage());
@@ -54,8 +57,8 @@ public class ManagerDonnees {
 	 * @param nomCapteur
 	 * @param valeur
 	 */
-	public void actualiserValeurCapteur(String nomCapteur, double valeur) {
-		String requete = "INSERT INTO Releves VALUES (NULL, ?, ?, ?)";
+	public synchronized void actualiserValeurCapteur(String nomCapteur, double valeur) {
+		String requete = "INSERT INTO Releves (Id, NomCapteur, Valeur, DateReleve) VALUES (NULL, ?, ?, ?)";
 		
 		for(Capteur capteur : capteursConnectes) {
 			if (capteur.getNom().equals(nomCapteur)) {
@@ -83,15 +86,18 @@ public class ManagerDonnees {
 	 * @param etage
 	 * @param type
 	 */
-	public void connecterCapteur(String nom, String batiment, String lieu, int etage, TypeCapteur type) {
-		String requete = "INSERT IGNORE INTO Releves VALUES (?, ?, ?, ?, ?, ?, ?)";
+	public synchronized void connecterCapteur(String nom, String batiment, String lieu, int etage, TypeCapteur type) {
+		String requete = 
+				"INSERT IGNORE INTO Capteurs (NomCapteur, NomFluide, Batiment, Etage, LieuDetails, SeuilMin, SeuilMax) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
 		
 		Capteur capteur = new Capteur(nom, batiment, lieu, etage, type);
 		capteursConnectes.add(capteur);
+		capteur.setModele(capteursTableModel);
 		try {
 			PreparedStatement s = connexionBD.prepareStatement(requete);
 			s.setString(1, nom);
-			s.setString(2, type.toString());
+			s.setString(2, type.name());
 			s.setString(3, batiment);
 			s.setInt(4, etage);
 			s.setString(5, lieu);
@@ -140,8 +146,10 @@ public class ManagerDonnees {
 		return capteursConnectes;
 	}
 	
-	public void deconnecterCapteur(String nomCapteur) {
-		for(Capteur capteur : capteursConnectes) {
+	// TODO exception
+	public synchronized void deconnecterCapteur(String nomCapteur) {
+		for(Iterator<Capteur> capteurIter = capteursConnectes.iterator(); capteurIter.hasNext();) {
+			Capteur capteur = capteurIter.next();
 			if (capteur.getNom().equals(nomCapteur)) {
 				capteursConnectes.remove(capteur);
 			}
