@@ -3,10 +3,14 @@
  */
 package ihm;
 
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics2D;
 import java.awt.Toolkit;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.LinkedHashSet;
 
 import javax.swing.Box;
@@ -27,6 +31,19 @@ import donnees.CapteursTableModel;
 import donnees.ManagerDonnees;
 import serveur.Serveur;
 
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot3D;
+import org.jfree.chart.plot.Plot;
+import org.jfree.chart.plot.PlotRenderingInfo;
+import org.jfree.chart.plot.PlotState;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
+import org.jfree.util.Rotation;
+
+
 /**
  * @author bruno
  *
@@ -39,6 +56,7 @@ public class ManagerIHM implements Runnable {
 	private CapteursTableModel capteursTableModel;
 	private int nbCapteurs = 0;
 	private Serveur serveur;
+
 	
 	/**
 	 * 
@@ -49,11 +67,11 @@ public class ManagerIHM implements Runnable {
 		this.capteursTableModel = capteursTableModel;
 	}
 	
-	// TODO changer le titre en "Port d'écoute des capteurs" ?
+	// TODO changer le titre en "Port d'ï¿½coute des capteurs" ?
 	private void fenetreDeConnexion() {
 		JFrame connexion = new JFrame("Connexion");
 		String strPort = JOptionPane.showInputDialog(connexion,
-				"Numéro de port:", DEFAULT_PORT);
+				"Numï¿½ro de port:", DEFAULT_PORT);
 		if (strPort == null) 
 			portDEcouteCapteurs = DEFAULT_PORT;
 		else
@@ -66,7 +84,7 @@ public class ManagerIHM implements Runnable {
 	 */
 	private JPanel analyseurTempsReel() {
 		JPanel panel = new JPanel(new BorderLayout());
-		JLabel titre = new JLabel("Analyseur Temps Réel");
+		JLabel titre = new JLabel("Analyseur Temps Rï¿½el");
 		JTable tableau = new JTable(capteursTableModel);
 		Box titreBox= new Box(BoxLayout.Y_AXIS); //set a definir la separation entre le titre et le tableau
 		
@@ -83,8 +101,12 @@ public class ManagerIHM implements Runnable {
 	 */
 	private JPanel analyseurDonnees() {
 		JPanel panel = new JPanel(new BorderLayout());
-		JLabel titre = new JLabel("Analyseur De Données");
-		
+		JLabel titre = new JLabel("Analyseur De Donnï¿½es");
+
+		Box titreBox = new Box(BoxLayout.Y_AXIS);
+		titreBox.add(titre);
+		titreBox.add(Box.createVerticalGlue());
+			
 		panel.add(titre,BorderLayout.PAGE_START);
 		return panel;
 	}
