@@ -67,11 +67,11 @@ public class ManagerIHM implements Runnable {
 		this.capteursTableModel = capteursTableModel;
 	}
 	
-	// TODO changer le titre en "Port d'ï¿½coute des capteurs" ?
+	// TODO changer le titre en "Port d'écoute des capteurs" ?
 	private void fenetreDeConnexion() {
 		JFrame connexion = new JFrame("Connexion");
 		String strPort = JOptionPane.showInputDialog(connexion,
-				"Numï¿½ro de port:", DEFAULT_PORT);
+				"Numéro de port:", DEFAULT_PORT);
 		if (strPort == null) 
 			portDEcouteCapteurs = DEFAULT_PORT;
 		else
@@ -84,7 +84,7 @@ public class ManagerIHM implements Runnable {
 	 */
 	private JPanel analyseurTempsReel() {
 		JPanel panel = new JPanel(new BorderLayout());
-		JLabel titre = new JLabel("Analyseur Temps Rï¿½el");
+		JLabel titre = new JLabel("Analyseur Temps Réel");
 		JTable tableau = new JTable(capteursTableModel);
 		Box titreBox= new Box(BoxLayout.Y_AXIS); //set a definir la separation entre le titre et le tableau
 		
@@ -101,7 +101,7 @@ public class ManagerIHM implements Runnable {
 	 */
 	private JPanel analyseurDonnees() {
 		JPanel panel = new JPanel(new BorderLayout());
-		JLabel titre = new JLabel("Analyseur De Donnï¿½es");
+		JLabel titre = new JLabel("Analyseur De Données");
 
 		Box titreBox = new Box(BoxLayout.Y_AXIS);
 		titreBox.add(titre);
