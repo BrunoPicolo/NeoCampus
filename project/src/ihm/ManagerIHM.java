@@ -16,6 +16,8 @@ import java.util.LinkedHashSet;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -23,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
@@ -30,6 +33,8 @@ import javax.swing.tree.TreeModel;
 import donnees.Capteur;
 import donnees.CapteursTableModel;
 import donnees.ManagerDonnees;
+import donnees.TypeCapteur;
+import javafx.scene.layout.Border;
 import serveur.Serveur;
 
 
@@ -103,12 +108,41 @@ public class ManagerIHM implements Runnable {
 	private JPanel analyseurDonnees() {
 		JPanel panel = new JPanel(new BorderLayout());
 		JLabel titre = new JLabel("Analyseur De Données");
+		JPanel optionPanel = new JPanel(new BorderLayout());
+		JPanel choixFluide = new JPanel(new BorderLayout());
+		JPanel choixCapteur = new JPanel(new BorderLayout());
+		JPanel choixPeriode = new JPanel(new BorderLayout());
+		JButton appliquer = new JButton("Appliquer");
+		JComboBox<TypeCapteur> fluides = new JComboBox<>();// je ne sais pas tres bien l'utiliser, je crois que c'est comme ça 
+		JScrollPane capteurs = new JScrollPane();
 		
 		Box titreBox = new Box(BoxLayout.Y_AXIS);
+		Box capteurBox = new Box(BoxLayout.Y_AXIS);
+		
 		titreBox.add(titre);
-		titreBox.add(Box.createVerticalGlue());
-			
+		titreBox.add(Box.createHorizontalGlue()); //J'essaye de créer un espace entre le titre et les autres composants(ça ne marche pas...)
+		
+		//ajout de composants pour le choix des fluides
+		choixFluide.add(new JLabel("Type Fluide:"), BorderLayout.PAGE_START);
+		choixFluide.add(fluides, BorderLayout.CENTER);
+		
+		//ajout de composants pour le choix d'un capteur
+		capteurBox.add(new JLabel("Capteurs(max 3):"));
+		capteurBox.add(capteurs);
+		choixCapteur.add(appliquer,BorderLayout.CENTER);
+		choixCapteur.add(capteurBox, BorderLayout.LINE_START);
+		
+		//de meme pour la periode
+		choixPeriode.add(new JLabel("Periode:"), BorderLayout.PAGE_START);
+		
+		//ajout des trois paneux de choix dans le paneu d'options
+		optionPanel.add(choixFluide, BorderLayout.PAGE_START);
+		optionPanel.add(choixCapteur,BorderLayout.CENTER);
+		optionPanel.add(choixPeriode, BorderLayout.PAGE_END);
+		
 		panel.add(titre,BorderLayout.PAGE_START);
+		panel.add(optionPanel,BorderLayout.LINE_START);
+		
 		return panel;
 	}
 	/**
