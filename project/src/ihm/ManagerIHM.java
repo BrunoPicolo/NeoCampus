@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -102,7 +103,7 @@ public class ManagerIHM implements Runnable {
 	private JPanel analyseurDonnees() {
 		JPanel panel = new JPanel(new BorderLayout());
 		JLabel titre = new JLabel("Analyseur De Données");
-
+		
 		Box titreBox = new Box(BoxLayout.Y_AXIS);
 		titreBox.add(titre);
 		titreBox.add(Box.createVerticalGlue());
@@ -131,31 +132,30 @@ public class ManagerIHM implements Runnable {
 		JFrame frame = new JFrame("NeoCampus");
 		JPanel base = new JPanel(new BorderLayout());
 		JPanel analysePanel = new JPanel(new BorderLayout());
-		Box acContaier = new Box(BoxLayout.X_AXIS);
 		JPanel arborescence = arborescenceCapteurs();
 		JPanel donnees = analyseurDonnees();
 		JPanel tempsReel = analyseurTempsReel();
 		
-		acContaier.add(arborescence);
-		acContaier.add(Box.createHorizontalStrut(50));
-		base.add(analysePanel,BorderLayout.CENTER);
-		base.add(acContaier, BorderLayout.LINE_START);
-		analysePanel.add(donnees,BorderLayout.PAGE_START);
-		analysePanel.add(tempsReel,BorderLayout.PAGE_END);
+		JSplitPane barre1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,arborescence,analysePanel);
+		JSplitPane barre2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,donnees,tempsReel);
+
+		analysePanel.add(barre2);
+		base.add(barre1);
 		
 //		JFrame parametrage
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Dimension currentScreenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
 		frame.setSize(currentScreenSize);
 		frame.getContentPane().add(base);
-		frame.pack(); 
+		frame.pack();
+		frame.setResizable(false); // l'utilisateur ne peut pas modifier la taille de la fenetre
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
 		
 	}
 	
 	public void run() {
-		fenetreDeConnexion();
+		//fenetreDeConnexion();
 		// Mise en route du serveur
 		serveur = new Serveur(managerDonnees, "127.0.0.1", portDEcouteCapteurs);
 		Thread threadServeur = new Thread(serveur);

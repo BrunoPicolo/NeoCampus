@@ -2,8 +2,9 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="lib/mysql-connector-java.jar"/>
 	<classpathentry kind="lib" path="lib/jcommon-1.0.23.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="C:/Users/bruno/Documents/fac/cours2018-2019/projet/git/NeoCampus/project/lib/mysql-connector-java-8.0.13.jar"/>
+	<classpathentry kind="lib" path="C:/Users/bruno/Documents/fac/cours2018-2019/projet/git/NeoCampus/SimulateurCapteur/simulateur.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
