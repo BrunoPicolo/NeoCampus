@@ -94,6 +94,7 @@ public class ManagerDonnees {
 		Capteur capteur = new Capteur(nom, batiment, lieu, etage, type);
 		capteursConnectes.add(capteur);
 		capteur.setModele(capteursTableModel);
+		capteursTableModel.fireTableDataChanged();
 		try {
 			PreparedStatement s = connexionBD.prepareStatement(requete);
 			s.setString(1, nom);
@@ -151,7 +152,8 @@ public class ManagerDonnees {
 		for(Iterator<Capteur> capteurIter = capteursConnectes.iterator(); capteurIter.hasNext();) {
 			Capteur capteur = capteurIter.next();
 			if (capteur.getNom().equals(nomCapteur)) {
-				capteursConnectes.remove(capteur);
+				capteurIter.remove();
+				capteursTableModel.fireTableDataChanged();
 			}
 		}
 	}
