@@ -10,6 +10,9 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.TimeZone;
+
+import ihm.CapteursTableModel;
+
 import java.sql.*;
 
 /**
