@@ -10,7 +10,12 @@ import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Label;
+import java.awt.event.MouseEvent;
+import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -30,24 +35,14 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 
+import org.jfree.chart.ChartPanel;
+
 import donnees.Capteur;
 import donnees.ManagerDonnees;
+import donnees.Mesure;
 import donnees.TypeCapteur;
 import javafx.scene.layout.Border;
 import serveur.Serveur;
-
-
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PiePlot3D;
-import org.jfree.chart.plot.Plot;
-import org.jfree.chart.plot.PlotRenderingInfo;
-import org.jfree.chart.plot.PlotState;
-import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.general.PieDataset;
-import org.jfree.util.Rotation;
-
 
 /**
  * @author bruno
@@ -112,7 +107,7 @@ public class ManagerIHM implements Runnable {
 		JPanel panel = new JPanel(new BorderLayout());
 		
 		Box options = new Box(BoxLayout.Y_AXIS);
-		JPanel graphe = new JPanel();
+		ChartPanel graphe = new ChartPanel(new Graphe().afficher());
 		
 		JPanel choixFluide = new JPanel(new BorderLayout());
 		JComboBox<TypeCapteur> fluides = new JComboBox<>(TypeCapteur.values());
@@ -149,7 +144,7 @@ public class ManagerIHM implements Runnable {
 
 		panel.add(new JLabel("Analyseur de données"), BorderLayout.PAGE_START);
 		panel.add(options, BorderLayout.LINE_START);
-		panel.add(graphe, BorderLayout.CENTER);
+		panel.add(graphe, BorderLayout.LINE_END);
 		
 
 		return panel;
@@ -196,6 +191,20 @@ public class ManagerIHM implements Runnable {
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
 		
+	}
+	
+
+	//Méthode appelée lors du clic de souris
+	// Creer une nouvelle classe pour le bouton appliquer et faire un bouton personnalisé
+	public void mouseClickedGraphe(MouseEvent event) { 
+		Map<Capteur,List<Mesure>> donnees = new TreeMap<Capteur,List<Mesure>>();
+		for (Capteur c : this.managerDonnees.getCapteursConnectes()){
+			if (c.getType().equals(TypeCapteur.EAU)){
+
+				donnees.put(c, this.managerDonnees.mesuresPeriode(c,new Date(),new Date()));
+			}
+		}
+		this.analyseurDonnees().add(new ChartPanel(new Graphe(donnees).afficher()),BorderLayout.LINE_END);
 	}
 	
 	public void run() {
