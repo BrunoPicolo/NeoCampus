@@ -1,5 +1,7 @@
 package donnees;
 
+import ihm.CapteursTableModel;
+
 /**
  * 
  * @author bruno

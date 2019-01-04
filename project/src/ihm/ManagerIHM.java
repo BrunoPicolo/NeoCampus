@@ -34,7 +34,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 
 import donnees.Capteur;
-import donnees.CapteursTableModel;
 import donnees.ManagerDonnees;
 import donnees.TypeCapteur;
 import javafx.scene.layout.Border;
@@ -63,6 +62,7 @@ public class ManagerIHM implements Runnable {
 	private int portDEcouteCapteurs = DEFAULT_PORT;
 	private ManagerDonnees managerDonnees;
 	private CapteursTableModel capteursTableModel;
+	private CapteursTableCellRenderer capteursTableCellRenderer;
 	private int nbCapteurs = 0;
 	private Serveur serveur;
 
@@ -71,9 +71,11 @@ public class ManagerIHM implements Runnable {
 	 * 
 	 * @param managerDonnees
 	 */
-	public ManagerIHM(ManagerDonnees managerDonnees, CapteursTableModel capteursTableModel) {
+	public ManagerIHM(ManagerDonnees managerDonnees, CapteursTableModel capteursTableModel,
+			CapteursTableCellRenderer capteursTableCellRenderer) {
 		this.managerDonnees = managerDonnees;
 		this.capteursTableModel = capteursTableModel;
+		this.capteursTableCellRenderer = capteursTableCellRenderer;
 	}
 	
 	// TODO changer le titre en "Port d'écoute des capteurs" ?
@@ -95,6 +97,7 @@ public class ManagerIHM implements Runnable {
 		JPanel panel = new JPanel(new BorderLayout());
 		JLabel titre = new JLabel("Analyseur Temps Réel");
 		JTable tableau = new JTable(capteursTableModel);
+		tableau.setDefaultRenderer(Object.class, capteursTableCellRenderer);
 		Box titreBox= new Box(BoxLayout.Y_AXIS); //set a definir la separation entre le titre et le tableau
 		
 		titreBox.add(titre);
@@ -211,9 +214,11 @@ public class ManagerIHM implements Runnable {
 	public static void main(String[] args) {
 		LinkedHashSet<Capteur> listeCapteurs = new LinkedHashSet<>();
 		CapteursTableModel capteursTableModel = new CapteursTableModel(listeCapteurs);
+		CapteursTableCellRenderer capteursTableCellRenderer = new CapteursTableCellRenderer(listeCapteurs);
 		ManagerDonnees managerDonnees = new ManagerDonnees("localhost:3306", "root", "",
 				listeCapteurs, capteursTableModel);
 		
-		javax.swing.SwingUtilities.invokeLater(new ManagerIHM(managerDonnees, capteursTableModel));
+		javax.swing.SwingUtilities.invokeLater(new ManagerIHM(managerDonnees,
+				capteursTableModel, capteursTableCellRenderer));
 	}
 }

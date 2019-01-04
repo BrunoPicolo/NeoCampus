@@ -1,9 +1,10 @@
 /**
  * 
  */
-package donnees;
+package ihm;
 
 import javax.swing.table.AbstractTableModel;
+import donnees.Capteur;
 import java.util.LinkedHashSet;
 
 /**
