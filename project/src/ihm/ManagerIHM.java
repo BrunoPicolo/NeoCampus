@@ -10,10 +10,6 @@ import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Label;
-import java.awt.Toolkit;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.io.File;
 import java.util.LinkedHashSet;
 
 import javax.swing.Box;
@@ -23,6 +19,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -123,7 +120,9 @@ public class ManagerIHM implements Runnable {
 		choixFluide.add(fluides, BorderLayout.CENTER);
 		
 		JPanel choixCapteur = new JPanel(new BorderLayout());
-		JScrollPane capteurs = new JScrollPane();
+		JList<String> listeCapteurs = new JList(new String[] {"toto","tata","tete"}); //Pour tester
+		JScrollPane capteurs = new JScrollPane(listeCapteurs,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		choixCapteur.add(new JLabel("Capteurs(max 3)"),BorderLayout.PAGE_START);
 		choixCapteur.add(capteurs, BorderLayout.CENTER);
 		
@@ -142,7 +141,6 @@ public class ManagerIHM implements Runnable {
 		flowPanel.add(dateMax);
 		choixPeriode.add(new Label("Periode:"), BorderLayout.PAGE_START);
 		choixPeriode.add(flowPanel, BorderLayout.LINE_START);
-//		choixPeriode.add(appliquer, BorderLayout.LINE_END);
 		
 		options.add(choixFluide);
 		options.add(choixCapteur);
@@ -181,6 +179,7 @@ public class ManagerIHM implements Runnable {
 		JPanel donnees = analyseurDonnees();
 		JPanel tempsReel = analyseurTempsReel();
 		
+		donnees.setMinimumSize(new Dimension(800, 300));
 		JSplitPane barre1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,arborescence,analysePanel);
 		JSplitPane barre2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,donnees,tempsReel);
 
@@ -192,7 +191,7 @@ public class ManagerIHM implements Runnable {
 		Dimension currentScreenSize = new Dimension(1000,600); // s'on enleve frame.pack() alors c'est la taille de la fenetre 
 		frame.setSize(currentScreenSize);
 		frame.getContentPane().add(base);
-		frame.pack();
+//		frame.pack();
 		frame.setResizable(true); // l'utilisateur ne peut pas modifier la taille de la fenetre
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
