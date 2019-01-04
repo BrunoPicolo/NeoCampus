@@ -59,7 +59,7 @@ import org.jfree.util.Rotation;
 public class ManagerIHM implements Runnable {
 	private static final int DEFAULT_PORT = 8952;
 	
-	private int portDEcouteCapteurs;
+	private int portDEcouteCapteurs = DEFAULT_PORT;
 	private ManagerDonnees managerDonnees;
 	private CapteursTableModel capteursTableModel;
 	private int nbCapteurs = 0;
@@ -75,11 +75,11 @@ public class ManagerIHM implements Runnable {
 		this.capteursTableModel = capteursTableModel;
 	}
 	
-	// TODO changer le titre en "Port d'ï¿½coute des capteurs" ?
+	// TODO changer le titre en "Port d'écoute des capteurs" ?
 	private void fenetreDeConnexion() {
 		JFrame connexion = new JFrame("Connexion");
 		String strPort = JOptionPane.showInputDialog(connexion,
-				"Numï¿½ro de port:", DEFAULT_PORT);
+				"Numéro de port:", DEFAULT_PORT);
 		if (strPort == null) 
 			portDEcouteCapteurs = DEFAULT_PORT;
 		else
@@ -92,7 +92,7 @@ public class ManagerIHM implements Runnable {
 	 */
 	private JPanel analyseurTempsReel() {
 		JPanel panel = new JPanel(new BorderLayout());
-		JLabel titre = new JLabel("Analyseur Temps Rï¿½el");
+		JLabel titre = new JLabel("Analyseur Temps Réel");
 		JTable tableau = new JTable(capteursTableModel);
 		Box titreBox= new Box(BoxLayout.Y_AXIS); //set a definir la separation entre le titre et le tableau
 		
@@ -109,9 +109,9 @@ public class ManagerIHM implements Runnable {
 	 */
 	private JPanel analyseurDonnees() {
 		JPanel panel = new JPanel(new BorderLayout()); // paneu principale pour separer le titre des options et le graphe 
-		JLabel titre = new JLabel("Analyseur De Donnï¿½es");
 		JPanel panel2 = new JPanel(new GridLayout(1, 2)); // paneu pour separer le graphe et les options
-		Box optionPanel = new Box(BoxLayout.Y_AXIS); // Boite pour contenir des ï¿½lï¿½ments de l'haut vers le bas 
+		JLabel titre = new JLabel("Analyseur De Données");
+		Box optionPanel = new Box(BoxLayout.Y_AXIS); // Boite pour contenir des éléments de l'haut vers le bas 
 		JPanel choixFluide = new JPanel(new BorderLayout());
 		JPanel choixCapteur = new JPanel(new BorderLayout());
 		JPanel choixPeriode = new JPanel(new BorderLayout());
@@ -122,7 +122,7 @@ public class ManagerIHM implements Runnable {
 		Box titreBox = new Box(BoxLayout.Y_AXIS);
 		
 		titreBox.add(titre);
-		titreBox.add(Box.createHorizontalGlue()); //J'essaye de crï¿½er un espace entre le titre et les autres composants(ï¿½a ne marche pas...)
+		titreBox.add(Box.createHorizontalGlue()); //J'essaye de créer un espace entre le titre et les autres composants(ça ne marche pas...)
 		
 		//ajout de composants pour le choix des fluides
 		choixFluide.add(new JLabel("Type Fluide:"), BorderLayout.PAGE_START);
@@ -144,7 +144,7 @@ public class ManagerIHM implements Runnable {
 		optionPanel.add(choixPeriode);
 		
 		panel2.add(optionPanel);
-		panel2.add(new JButton("toto")); // Le bouton rï¿½presente le graphe 
+		panel2.add(new JButton("toto")); // Le bouton répresente le graphe 
 		panel.add(titre,BorderLayout.PAGE_START);
 		panel.add(panel2, BorderLayout.CENTER);
 	

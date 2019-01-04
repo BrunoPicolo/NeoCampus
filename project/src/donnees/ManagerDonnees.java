@@ -147,7 +147,6 @@ public class ManagerDonnees {
 		return capteursConnectes;
 	}
 	
-	// TODO exception
 	public synchronized void deconnecterCapteur(String nomCapteur) {
 		for(Iterator<Capteur> capteurIter = capteursConnectes.iterator(); capteurIter.hasNext();) {
 			Capteur capteur = capteurIter.next();
