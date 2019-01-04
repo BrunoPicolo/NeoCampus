@@ -11,6 +11,7 @@ import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
 import java.util.LinkedHashSet;
 
 import javax.swing.Box;
@@ -73,11 +74,11 @@ public class ManagerIHM implements Runnable {
 		this.capteursTableModel = capteursTableModel;
 	}
 	
-	// TODO changer le titre en "Port d'écoute des capteurs" ?
+	// TODO changer le titre en "Port d'ï¿½coute des capteurs" ?
 	private void fenetreDeConnexion() {
 		JFrame connexion = new JFrame("Connexion");
 		String strPort = JOptionPane.showInputDialog(connexion,
-				"Numéro de port:", DEFAULT_PORT);
+				"Numï¿½ro de port:", DEFAULT_PORT);
 		if (strPort == null) 
 			portDEcouteCapteurs = DEFAULT_PORT;
 		else
@@ -90,7 +91,7 @@ public class ManagerIHM implements Runnable {
 	 */
 	private JPanel analyseurTempsReel() {
 		JPanel panel = new JPanel(new BorderLayout());
-		JLabel titre = new JLabel("Analyseur Temps Réel");
+		JLabel titre = new JLabel("Analyseur Temps Rï¿½el");
 		JTable tableau = new JTable(capteursTableModel);
 		Box titreBox= new Box(BoxLayout.Y_AXIS); //set a definir la separation entre le titre et le tableau
 		
@@ -107,20 +108,20 @@ public class ManagerIHM implements Runnable {
 	 */
 	private JPanel analyseurDonnees() {
 		JPanel panel = new JPanel(new BorderLayout());
-		JLabel titre = new JLabel("Analyseur De Données");
+		JLabel titre = new JLabel("Analyseur De Donnï¿½es");
 		JPanel optionPanel = new JPanel(new BorderLayout());
 		JPanel choixFluide = new JPanel(new BorderLayout());
 		JPanel choixCapteur = new JPanel(new BorderLayout());
 		JPanel choixPeriode = new JPanel(new BorderLayout());
 		JButton appliquer = new JButton("Appliquer");
-		JComboBox<TypeCapteur> fluides = new JComboBox<>();// je ne sais pas tres bien l'utiliser, je crois que c'est comme ça 
+		JComboBox<TypeCapteur> fluides = new JComboBox<>();// je ne sais pas tres bien l'utiliser, je crois que c'est comme ï¿½a 
 		JScrollPane capteurs = new JScrollPane();
 		
 		Box titreBox = new Box(BoxLayout.Y_AXIS);
 		Box capteurBox = new Box(BoxLayout.Y_AXIS);
 		
 		titreBox.add(titre);
-		titreBox.add(Box.createHorizontalGlue()); //J'essaye de créer un espace entre le titre et les autres composants(ça ne marche pas...)
+		titreBox.add(Box.createHorizontalGlue()); //J'essaye de crï¿½er un espace entre le titre et les autres composants(ï¿½a ne marche pas...)
 		
 		//ajout de composants pour le choix des fluides
 		choixFluide.add(new JLabel("Type Fluide:"), BorderLayout.PAGE_START);
@@ -189,12 +190,20 @@ public class ManagerIHM implements Runnable {
 	}
 	
 	public void run() {
-		//fenetreDeConnexion();
+		fenetreDeConnexion();
 		// Mise en route du serveur
 		serveur = new Serveur(managerDonnees, "127.0.0.1", portDEcouteCapteurs);
 		Thread threadServeur = new Thread(serveur);
 		threadServeur.start();
 		fenetrePrincipale();
+		//Lancement du simulateur
+		File path = new File("exec.bat");
+		Runtime simulateur = Runtime.getRuntime();
+		try {
+			simulateur.exec("cmd.exe /k " + path);
+		}catch (Exception e) {
+			System.err.println(e);
+		}
 	}
 	
 	/**
