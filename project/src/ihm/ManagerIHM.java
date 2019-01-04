@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Label;
 import java.awt.Toolkit;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -108,46 +109,48 @@ public class ManagerIHM implements Runnable {
 	 * @return
 	 */
 	private JPanel analyseurDonnees() {
-		JPanel panel = new JPanel(new BorderLayout()); // paneu principale pour separer le titre des options et le graphe 
-		JPanel panel2 = new JPanel(new GridLayout(1, 2)); // paneu pour separer le graphe et les options
-		JLabel titre = new JLabel("Analyseur De Données");
-		Box optionPanel = new Box(BoxLayout.Y_AXIS); // Boite pour contenir des éléments de l'haut vers le bas 
+		JPanel panel = new JPanel(new BorderLayout());
+		
+		Box options = new Box(BoxLayout.Y_AXIS);
+		JPanel graphe = new JPanel();
+		
 		JPanel choixFluide = new JPanel(new BorderLayout());
-		JPanel choixCapteur = new JPanel(new BorderLayout());
-		JPanel choixPeriode = new JPanel(new BorderLayout());
-		JButton appliquer = new JButton("Appliquer");
 		JComboBox<TypeCapteur> fluides = new JComboBox<>(TypeCapteur.values());
-		JScrollPane capteurs = new JScrollPane();
-		
-		Box titreBox = new Box(BoxLayout.Y_AXIS);
-		
-		titreBox.add(titre);
-		titreBox.add(Box.createHorizontalGlue()); //J'essaye de créer un espace entre le titre et les autres composants(ça ne marche pas...)
-		
-		//ajout de composants pour le choix des fluides
-		choixFluide.add(new JLabel("Type Fluide:"), BorderLayout.PAGE_START);
+		choixFluide.add(new JLabel("Fluide:"), BorderLayout.PAGE_START);
 		choixFluide.add(fluides, BorderLayout.CENTER);
 		
-		//ajout de composants pour le choix d'un capteur
-
-		
-		choixCapteur.add(new JLabel("Capteurs(max 3):"),BorderLayout.PAGE_START);
+		JPanel choixCapteur = new JPanel(new BorderLayout());
+		JScrollPane capteurs = new JScrollPane();
+		choixCapteur.add(new JLabel("Capteurs(max 3)"),BorderLayout.PAGE_START);
 		choixCapteur.add(capteurs, BorderLayout.CENTER);
 		
-		//de meme pour la periode
-		choixPeriode.add(new JLabel("Periode:"), BorderLayout.PAGE_START);
-		choixPeriode.add(appliquer,BorderLayout.LINE_END);
+		JPanel choixPeriode = new JPanel(new BorderLayout());
+		JPanel flowPanel = new JPanel(new FlowLayout());
+		Box dateMin = new Box(BoxLayout.Y_AXIS);
+		JFormattedTextField min = new JFormattedTextField();
+		dateMin.add(new Label("Début:"));
+		dateMin.add(min);
+		Box dateMax = new Box(BoxLayout.Y_AXIS);
+		dateMax.add(new Label("Fin:"));
+		JFormattedTextField max = new JFormattedTextField();
+		dateMax.add(max);
+		JButton appliquer = new JButton("Appliquer");
+		flowPanel.add(dateMin);
+		flowPanel.add(dateMax);
+		choixPeriode.add(new Label("Periode:"), BorderLayout.PAGE_START);
+		choixPeriode.add(flowPanel, BorderLayout.LINE_START);
+//		choixPeriode.add(appliquer, BorderLayout.LINE_END);
 		
-		//ajout des trois paneux de choix dans le paneu d'options
-		optionPanel.add(choixFluide);
-		optionPanel.add(choixCapteur);
-		optionPanel.add(choixPeriode);
+		options.add(choixFluide);
+		options.add(choixCapteur);
+		options.add(choixPeriode);
+		options.add(appliquer);
+
+		panel.add(new JLabel("Analyseur de données"), BorderLayout.PAGE_START);
+		panel.add(options, BorderLayout.LINE_START);
+		panel.add(graphe, BorderLayout.CENTER);
 		
-		panel2.add(optionPanel);
-		panel2.add(new JButton("toto")); // Le bouton répresente le graphe 
-		panel.add(titre,BorderLayout.PAGE_START);
-		panel.add(panel2, BorderLayout.CENTER);
-	
+
 		return panel;
 	}
 	/**
@@ -169,7 +172,7 @@ public class ManagerIHM implements Runnable {
 	
 	private void fenetrePrincipale() {
 		JFrame frame = new JFrame("NeoCampus");
-		JPanel base = new JPanel();
+		JPanel base = new JPanel(new BorderLayout());
 		JPanel analysePanel = new JPanel(new BorderLayout());
 		JPanel arborescence = arborescenceCapteurs();
 		JPanel donnees = analyseurDonnees();
@@ -183,11 +186,11 @@ public class ManagerIHM implements Runnable {
 		
 //		JFrame parametrage
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Dimension currentScreenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
+		Dimension currentScreenSize = new Dimension(1000,600); // s'on enleve frame.pack() alors c'est la taille de la fenetre 
 		frame.setSize(currentScreenSize);
 		frame.getContentPane().add(base);
 		frame.pack();
-		frame.setResizable(false); // l'utilisateur ne peut pas modifier la taille de la fenetre
+		frame.setResizable(true); // l'utilisateur ne peut pas modifier la taille de la fenetre
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
 		
