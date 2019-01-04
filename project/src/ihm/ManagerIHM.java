@@ -57,7 +57,7 @@ import org.jfree.util.Rotation;
 public class ManagerIHM implements Runnable {
 	private static final int DEFAULT_PORT = 8952;
 	
-	private int portDEcouteCapteurs = DEFAULT_PORT;
+	private int portDEcouteCapteurs;
 	private ManagerDonnees managerDonnees;
 	private CapteursTableModel capteursTableModel;
 	private int nbCapteurs = 0;
@@ -189,7 +189,7 @@ public class ManagerIHM implements Runnable {
 	}
 	
 	public void run() {
-		// fenetreDeConnexion();
+		//fenetreDeConnexion();
 		// Mise en route du serveur
 		serveur = new Serveur(managerDonnees, "127.0.0.1", portDEcouteCapteurs);
 		Thread threadServeur = new Thread(serveur);
