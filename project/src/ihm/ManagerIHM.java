@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -107,18 +108,18 @@ public class ManagerIHM implements Runnable {
 	 * @return
 	 */
 	private JPanel analyseurDonnees() {
-		JPanel panel = new JPanel(new BorderLayout());
+		JPanel panel = new JPanel(new BorderLayout()); // paneu principale pour separer le titre des options et le graphe 
 		JLabel titre = new JLabel("Analyseur De Données");
-		JPanel optionPanel = new JPanel(new BorderLayout());
+		JPanel panel2 = new JPanel(new GridLayout(1, 2)); // paneu pour separer le graphe et les options
+		Box optionPanel = new Box(BoxLayout.Y_AXIS); // Boite pour contenir des éléments de l'haut vers le bas 
 		JPanel choixFluide = new JPanel(new BorderLayout());
 		JPanel choixCapteur = new JPanel(new BorderLayout());
 		JPanel choixPeriode = new JPanel(new BorderLayout());
 		JButton appliquer = new JButton("Appliquer");
-		JComboBox<TypeCapteur> fluides = new JComboBox<>();// je ne sais pas tres bien l'utiliser, je crois que c'est comme ça 
+		JComboBox<TypeCapteur> fluides = new JComboBox<>(TypeCapteur.values());
 		JScrollPane capteurs = new JScrollPane();
 		
 		Box titreBox = new Box(BoxLayout.Y_AXIS);
-		Box capteurBox = new Box(BoxLayout.Y_AXIS);
 		
 		titreBox.add(titre);
 		titreBox.add(Box.createHorizontalGlue()); //J'essaye de créer un espace entre le titre et les autres composants(ça ne marche pas...)
@@ -128,22 +129,25 @@ public class ManagerIHM implements Runnable {
 		choixFluide.add(fluides, BorderLayout.CENTER);
 		
 		//ajout de composants pour le choix d'un capteur
-		capteurBox.add(new JLabel("Capteurs(max 3):"));
-		capteurBox.add(capteurs);
-		choixCapteur.add(appliquer,BorderLayout.CENTER);
-		choixCapteur.add(capteurBox, BorderLayout.LINE_START);
+
+		
+		choixCapteur.add(new JLabel("Capteurs(max 3):"),BorderLayout.PAGE_START);
+		choixCapteur.add(capteurs, BorderLayout.CENTER);
 		
 		//de meme pour la periode
 		choixPeriode.add(new JLabel("Periode:"), BorderLayout.PAGE_START);
+		choixPeriode.add(appliquer,BorderLayout.LINE_END);
 		
 		//ajout des trois paneux de choix dans le paneu d'options
-		optionPanel.add(choixFluide, BorderLayout.PAGE_START);
-		optionPanel.add(choixCapteur,BorderLayout.CENTER);
-		optionPanel.add(choixPeriode, BorderLayout.PAGE_END);
+		optionPanel.add(choixFluide);
+		optionPanel.add(choixCapteur);
+		optionPanel.add(choixPeriode);
 		
+		panel2.add(optionPanel);
+		panel2.add(new JButton("toto")); // Le bouton répresente le graphe 
 		panel.add(titre,BorderLayout.PAGE_START);
-		panel.add(optionPanel,BorderLayout.LINE_START);
-		
+		panel.add(panel2, BorderLayout.CENTER);
+	
 		return panel;
 	}
 	/**
@@ -165,7 +169,7 @@ public class ManagerIHM implements Runnable {
 	
 	private void fenetrePrincipale() {
 		JFrame frame = new JFrame("NeoCampus");
-		JPanel base = new JPanel(new BorderLayout());
+		JPanel base = new JPanel();
 		JPanel analysePanel = new JPanel(new BorderLayout());
 		JPanel arborescence = arborescenceCapteurs();
 		JPanel donnees = analyseurDonnees();
@@ -190,20 +194,20 @@ public class ManagerIHM implements Runnable {
 	}
 	
 	public void run() {
-		fenetreDeConnexion();
+		//fenetreDeConnexion();
 		// Mise en route du serveur
 		serveur = new Serveur(managerDonnees, "127.0.0.1", portDEcouteCapteurs);
 		Thread threadServeur = new Thread(serveur);
 		threadServeur.start();
 		fenetrePrincipale();
 		//Lancement du simulateur
-		File path = new File("exec.bat");
-		Runtime simulateur = Runtime.getRuntime();
-		try {
-			simulateur.exec("cmd.exe /k " + path);
-		}catch (Exception e) {
-			System.err.println(e);
-		}
+//		File path = new File("exec.bat");
+//		Runtime simulateur = Runtime.getRuntime();
+//		try {
+//			simulateur.exec("cmd.exe /k " + path);
+//		}catch (Exception e) {
+//			System.err.println(e);
+//		}
 	}
 	
 	/**
