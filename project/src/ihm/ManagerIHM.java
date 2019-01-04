@@ -200,14 +200,6 @@ public class ManagerIHM implements Runnable {
 		Thread threadServeur = new Thread(serveur);
 		threadServeur.start();
 		fenetrePrincipale();
-		//Lancement du simulateur
-//		File path = new File("exec.bat");
-//		Runtime simulateur = Runtime.getRuntime();
-//		try {
-//			simulateur.exec("cmd.exe /k " + path);
-//		}catch (Exception e) {
-//			System.err.println(e);
-//		}
 	}
 	
 	/**
