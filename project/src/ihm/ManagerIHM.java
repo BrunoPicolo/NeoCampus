@@ -11,6 +11,7 @@ import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
 import java.util.LinkedHashSet;
 
 import javax.swing.Box;
@@ -189,12 +190,20 @@ public class ManagerIHM implements Runnable {
 	}
 	
 	public void run() {
-		// fenetreDeConnexion();
+		fenetreDeConnexion();
 		// Mise en route du serveur
 		serveur = new Serveur(managerDonnees, "127.0.0.1", portDEcouteCapteurs);
 		Thread threadServeur = new Thread(serveur);
 		threadServeur.start();
 		fenetrePrincipale();
+		//Lancement du simulateur
+		File path = new File("exec.bat");
+		Runtime simulateur = Runtime.getRuntime();
+		try {
+			simulateur.exec("cmd.exe /k " + path);
+		}catch (Exception e) {
+			System.err.println(e);
+		}
 	}
 	
 	/**
