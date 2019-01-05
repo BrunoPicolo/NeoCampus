@@ -127,12 +127,13 @@ public class ManagerDonnees {
 		return mesures;
 	}
 	
-	public List<Capteur> getCapteursBD(){
-		String requete = "SELECT * FROM Capteurs";
+	public List<Capteur> getCapteursBD(String nomFluide) {
+		String requete = "SELECT * FROM Capteurs WHERE NomFluide = ?";
 		List<Capteur> capteurs = new ArrayList<>();
 		
 		try {
-			Statement s = connexionBD.createStatement();
+			PreparedStatement s = connexionBD.prepareStatement(requete);
+			s.setString(1, nomFluide);
 			ResultSet res = s.executeQuery(requete);
 			while (res.next()) {
 				Capteur capteur = new Capteur(
