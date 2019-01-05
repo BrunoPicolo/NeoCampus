@@ -3,6 +3,7 @@
  */
 package ihm;
 
+import java.awt.BorderLayout;
 import java.util.List;
 import java.util.Map;
 
@@ -11,10 +12,8 @@ import javax.swing.JPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.time.Day;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 import donnees.Capteur;
 import donnees.Mesure;
@@ -26,26 +25,32 @@ import donnees.TypeCapteur;
  */
 public class Graphe extends JPanel {
 	private JFreeChart graph;
-	private TimeSeriesCollection dataCollection = null;
-	private TypeCapteur typeC;
+	private XYSeriesCollection dataCollection = new XYSeriesCollection();
 	
 	public Graphe() {
-		super();
+		super(new BorderLayout());
 		graph = ChartFactory.createXYLineChart("Analyse données","Dates de relevés","Capteur non défini", dataCollection);
 	}
 	
-	public void afficher(Map<Capteur,List<Mesure>> donnees) {
+	public void afficher(Map<Capteur, List<Mesure>> donnees) {
+		if (donnees.isEmpty()) {
+			nettoyer();
+			return;
+		}
+		
 		dataCollection.removeAllSeries();
-		for (Capteur c : donnees.keySet()) {
-			TimeSeries series = new TimeSeries(c.getNom());
-			typeC = c.getType();
-			for (Mesure m : donnees.get(c)) {
-				series.add(new Day(m.getDate()), m.getValeur());
+		TypeCapteur type = TypeCapteur.EAU; // Initialisation par défaut
+		for (Capteur capteur : donnees.keySet()) {
+			XYSeries series = new XYSeries(capteur.getNom());
+			type = capteur.getType();
+			for (Mesure mesure : donnees.get(capteur)) {
+				series.add(mesure.getDate().getTime(), mesure.getValeur());
 			}
 			dataCollection.addSeries(series);
 		}
-		graph = ChartFactory.createXYLineChart("Analyse données", "Dates de relevés", typeC.getUnitee(), dataCollection);
-		this.removeAll();
+		graph = ChartFactory.createXYLineChart("Analyse données", "Dates de relevés", type.getUnitee(), dataCollection);
+		removeAll();
+		revalidate();
 		this.add(new ChartPanel(graph));
 		this.repaint();
 	}

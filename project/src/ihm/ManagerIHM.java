@@ -15,6 +15,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 
@@ -121,8 +124,9 @@ public class ManagerIHM implements Runnable {
 		choixFluide.add(fluides, BorderLayout.CENTER);
 		
 		JPanel choixCapteur = new JPanel(new BorderLayout());
-		JList<String> listeCapteurs = new JList();
-		listeCapteurs.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		JList<Capteur> listeCapteurs = new JList<>();
+		listeCapteurs.setCellRenderer(new CapteursListCellRenderer());
+		listeCapteurs.setSelectionModel(new CapteursListSelectionModel());
 		JScrollPane capteurs = new JScrollPane(listeCapteurs,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		choixCapteur.add(new JLabel("Capteurs(max 3)"),BorderLayout.PAGE_START);
@@ -139,6 +143,7 @@ public class ManagerIHM implements Runnable {
 		JFormattedTextField max = new JFormattedTextField();
 		dateMax.add(max);
 		JButton appliquer = new JButton("Appliquer");
+		appliquer.setEnabled(false);
 		flowPanel.add(dateMin);
 		flowPanel.add(dateMax);
 		choixPeriode.add(new Label("Periode:"), BorderLayout.PAGE_START);
@@ -153,12 +158,24 @@ public class ManagerIHM implements Runnable {
 		panel.add(options, BorderLayout.LINE_START);
 		panel.add(graphe, BorderLayout.LINE_END);
 		
-		fluides.addItemListener((ItemEvent event) -> {
+		fluides.addItemListener(event -> {
 			if (event.getStateChange() == ItemEvent.SELECTED) {
 				TypeCapteur type = (TypeCapteur)event.getItem();
 				itemChangedChoixFluide(type, listeCapteurs);
 			}
 		});
+		listeCapteurs.addListSelectionListener(event -> {
+			if (!event.getValueIsAdjusting()) {
+				JList source = (JList)event.getSource();
+				int[] selections = source.getSelectedIndices();
+				appliquer.setEnabled(selections.length != 0);
+			}
+		});
+		appliquer.addActionListener(event -> {
+			 mouseClickedAppliquer(listeCapteurs.getSelectedValuesList());
+		});
+		// valeurs par défaut de la liste de capteurs
+		itemChangedChoixFluide(fluides.getItemAt(0), listeCapteurs);
 
 		return panel;
 	}
@@ -170,12 +187,12 @@ public class ManagerIHM implements Runnable {
 		JPanel panel = new JPanel(new BorderLayout());
 		Box titreBox = new Box(BoxLayout.Y_AXIS);
 		JLabel titre = new JLabel("Arborescence Capteurs");
-		Arbre arbre = new Arbre();
+		// Arbre arbre = new Arbre();
 
 		titreBox.add(titre);
 		titreBox.add(Box.createVerticalStrut(10));
 		panel.add(titreBox,BorderLayout.PAGE_START);
-		panel.add(arbre);
+		// panel.add(arbre);
 		return panel;
 	}
 	
@@ -183,7 +200,7 @@ public class ManagerIHM implements Runnable {
 		JFrame frame = new JFrame("NeoCampus");
 		JPanel base = new JPanel(new BorderLayout());
 		JPanel analysePanel = new JPanel(new BorderLayout());
-		JPanel arborescence =arborescenceCapteurs();
+		JPanel arborescence = arborescenceCapteurs();
 		JPanel donnees = analyseurDonnees();
 		JPanel tempsReel = analyseurTempsReel();
 		
@@ -207,25 +224,20 @@ public class ManagerIHM implements Runnable {
 	}
 	
 
-	//Méthode appelée lors du clic de souris
-	// Creer une nouvelle classe pour le bouton appliquer et faire un bouton personnalisé
-	public void mouseClickedGraphe(MouseEvent event) { 
-		Map<Capteur,List<Mesure>> donnees = new TreeMap<>();
-		for (Capteur c : this.managerDonnees.getCapteursConnectes()) {
-			if (c.getType().equals(TypeCapteur.EAU)) {
-
-				donnees.put(c, this.managerDonnees.mesuresPeriode(c,new Date(),new Date()));
-			}
+	// Méthode appelée lors du clic de souris sur le bouton "Appliquer"
+	private void mouseClickedAppliquer(List<Capteur> capteurs) { 
+		Map<Capteur,List<Mesure>> donnees = new HashMap<>();
+		for (Capteur capteur : capteurs) {
+			donnees.put(capteur, this.managerDonnees.mesuresPeriode(capteur, new Date(),new Date()));
 		}
+		System.out.println("Affichage: " + donnees);
 		graphe.afficher(donnees);
 	}
 	
-	public void itemChangedChoixFluide(TypeCapteur type, JList listeCapteurs) {
+	private void itemChangedChoixFluide(TypeCapteur type, JList<Capteur> listeCapteurs) {
 		List<Capteur> capteurs = managerDonnees.getCapteursBD(type.name());
-		Object[] nomsCapteurs = capteurs.stream()
-				.map(capteur -> capteur.getNom())
-				.toArray();
-		listeCapteurs.setListData(nomsCapteurs);
+		Capteur[] tableauCapteurs = capteurs.toArray(new Capteur[0]);
+		listeCapteurs.setListData(tableauCapteurs);
 	}
 	
 	public void run() {
