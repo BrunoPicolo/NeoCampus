@@ -187,12 +187,12 @@ public class ManagerIHM implements Runnable {
 		JPanel panel = new JPanel(new BorderLayout());
 		Box titreBox = new Box(BoxLayout.Y_AXIS);
 		JLabel titre = new JLabel("Arborescence Capteurs");
-		// Arbre arbre = new Arbre();
+		Arbre arbre = new Arbre();
 
 		titreBox.add(titre);
 		titreBox.add(Box.createVerticalStrut(10));
 		panel.add(titreBox,BorderLayout.PAGE_START);
-		// panel.add(arbre);
+		panel.add(arbre);
 		return panel;
 	}
 	
