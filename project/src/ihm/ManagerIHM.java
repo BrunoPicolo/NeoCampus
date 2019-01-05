@@ -10,12 +10,15 @@ import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Label;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -57,6 +60,8 @@ public class ManagerIHM implements Runnable {
 	private CapteursTableCellRenderer capteursTableCellRenderer;
 	private int nbCapteurs = 0;
 	private Serveur serveur;
+	
+	private Graphe graphe;
 
 	
 	/**
@@ -107,7 +112,7 @@ public class ManagerIHM implements Runnable {
 		JPanel panel = new JPanel(new BorderLayout());
 		
 		Box options = new Box(BoxLayout.Y_AXIS);
-		ChartPanel graphe = new ChartPanel(new Graphe().afficher());
+		graphe = new Graphe();
 		
 		JPanel choixFluide = new JPanel(new BorderLayout());
 		JComboBox<TypeCapteur> fluides = new JComboBox<>(TypeCapteur.values());
@@ -115,7 +120,7 @@ public class ManagerIHM implements Runnable {
 		choixFluide.add(fluides, BorderLayout.CENTER);
 		
 		JPanel choixCapteur = new JPanel(new BorderLayout());
-		JList<String> listeCapteurs = new JList(new String[] {"toto","tata","tete"}); //Pour tester
+		JList<String> listeCapteurs = new JList();
 		JScrollPane capteurs = new JScrollPane(listeCapteurs,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		choixCapteur.add(new JLabel("Capteurs(max 3)"),BorderLayout.PAGE_START);
@@ -146,6 +151,12 @@ public class ManagerIHM implements Runnable {
 		panel.add(options, BorderLayout.LINE_START);
 		panel.add(graphe, BorderLayout.LINE_END);
 		
+		fluides.addItemListener((ItemEvent event) -> {
+			if (event.getStateChange() == ItemEvent.SELECTED) {
+				TypeCapteur type = (TypeCapteur)event.getItem();
+				itemChangedChoixFluide(type, listeCapteurs);
+			}
+		});
 
 		return panel;
 	}
@@ -197,14 +208,22 @@ public class ManagerIHM implements Runnable {
 	//Méthode appelée lors du clic de souris
 	// Creer une nouvelle classe pour le bouton appliquer et faire un bouton personnalisé
 	public void mouseClickedGraphe(MouseEvent event) { 
-		Map<Capteur,List<Mesure>> donnees = new TreeMap<Capteur,List<Mesure>>();
-		for (Capteur c : this.managerDonnees.getCapteursConnectes()){
-			if (c.getType().equals(TypeCapteur.EAU)){
+		Map<Capteur,List<Mesure>> donnees = new TreeMap<>();
+		for (Capteur c : this.managerDonnees.getCapteursConnectes()) {
+			if (c.getType().equals(TypeCapteur.EAU)) {
 
 				donnees.put(c, this.managerDonnees.mesuresPeriode(c,new Date(),new Date()));
 			}
 		}
-		this.analyseurDonnees().add(new ChartPanel(new Graphe(donnees).afficher()),BorderLayout.LINE_END);
+		graphe.afficher(donnees);
+	}
+	
+	public void itemChangedChoixFluide(TypeCapteur type, JList listeCapteurs) {
+		List<Capteur> capteurs = managerDonnees.getCapteursBD(type.name());
+		Object[] nomsCapteurs = capteurs.stream()
+				.map(capteur -> capteur.getNom())
+				.toArray();
+		listeCapteurs.setListData(nomsCapteurs);
 	}
 	
 	public void run() {

@@ -33,7 +33,6 @@ public class ManagerDonnees {
 	 * @param identifiant
 	 * @param motDePasse
 	 */
-	// TODO Creer un classe BD que l'on donnerait en parametre ? Creation du hashset dans le constructeur ?
 	public ManagerDonnees(String adresse, String identifiant, String motDePasse,
 			LinkedHashSet<Capteur> capteursConnectes, CapteursTableModel capteursTableModel) { 
 		super();
@@ -135,7 +134,7 @@ public class ManagerDonnees {
 		try {
 			PreparedStatement s = connexionBD.prepareStatement(requete);
 			s.setString(1, nomFluide);
-			ResultSet res = s.executeQuery(requete);
+			ResultSet res = s.executeQuery();
 			while (res.next()) {
 				Capteur capteur = new Capteur(
 					res.getString("NomCapteur"),
@@ -148,6 +147,7 @@ public class ManagerDonnees {
 				capteur.setSeuilMax(res.getDouble("SeuilMax"));
 				capteurs.add(capteur);
 			}
+			res.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
