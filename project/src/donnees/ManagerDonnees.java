@@ -55,7 +55,6 @@ public class ManagerDonnees {
 			throw new Error("Probleme connexion BD: " + e.getMessage());
 		}
 	}
-	
 	/**
 	 * 
 	 * @param nomCapteur
@@ -166,5 +165,9 @@ public class ManagerDonnees {
 				capteursTableModel.fireTableDataChanged();
 			}
 		}
+	}
+	public LinkedHashSet<Capteur> getListeCapteurs() {
+		// TODO Auto-generated method stub
+		return capteursConnectes;
 	}
 }

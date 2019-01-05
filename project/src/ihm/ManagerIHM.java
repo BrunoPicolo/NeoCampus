@@ -11,6 +11,7 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.event.MouseEvent;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -41,7 +42,6 @@ import donnees.Capteur;
 import donnees.ManagerDonnees;
 import donnees.Mesure;
 import donnees.TypeCapteur;
-import javafx.scene.layout.Border;
 import serveur.Serveur;
 
 /**
@@ -157,7 +157,7 @@ public class ManagerIHM implements Runnable {
 		JPanel panel = new JPanel(new BorderLayout());
 		Box titreBox = new Box(BoxLayout.Y_AXIS);
 		JLabel titre = new JLabel("Arborescence Capteurs");
-		JTree arbre = new JTree();
+		Arbre arbre = new Arbre();
 
 		titreBox.add(titre);
 		titreBox.add(Box.createVerticalStrut(10));
@@ -170,7 +170,7 @@ public class ManagerIHM implements Runnable {
 		JFrame frame = new JFrame("NeoCampus");
 		JPanel base = new JPanel(new BorderLayout());
 		JPanel analysePanel = new JPanel(new BorderLayout());
-		JPanel arborescence = arborescenceCapteurs();
+		JPanel arborescence =arborescenceCapteurs();
 		JPanel donnees = analyseurDonnees();
 		JPanel tempsReel = analyseurTempsReel();
 		
@@ -216,6 +216,7 @@ public class ManagerIHM implements Runnable {
 		fenetrePrincipale();
 	}
 	
+
 	/**
 	 * @param args
 	 */
