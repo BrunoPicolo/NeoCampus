@@ -9,11 +9,13 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.Toolkit;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.io.File;
+import java.awt.Label;
+import java.awt.event.MouseEvent;
+import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -22,6 +24,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -32,24 +35,14 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 
+import org.jfree.chart.ChartPanel;
+
 import donnees.Capteur;
 import donnees.ManagerDonnees;
+import donnees.Mesure;
 import donnees.TypeCapteur;
 import javafx.scene.layout.Border;
 import serveur.Serveur;
-
-
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PiePlot3D;
-import org.jfree.chart.plot.Plot;
-import org.jfree.chart.plot.PlotRenderingInfo;
-import org.jfree.chart.plot.PlotState;
-import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.general.PieDataset;
-import org.jfree.util.Rotation;
-
 
 /**
  * @author bruno
@@ -111,46 +104,49 @@ public class ManagerIHM implements Runnable {
 	 * @return
 	 */
 	private JPanel analyseurDonnees() {
-		JPanel panel = new JPanel(new BorderLayout()); // paneu principale pour separer le titre des options et le graphe 
-		JPanel panel2 = new JPanel(new GridLayout(1, 2)); // paneu pour separer le graphe et les options
-		JLabel titre = new JLabel("Analyseur De Données");
-		Box optionPanel = new Box(BoxLayout.Y_AXIS); // Boite pour contenir des éléments de l'haut vers le bas 
+		JPanel panel = new JPanel(new BorderLayout());
+		
+		Box options = new Box(BoxLayout.Y_AXIS);
+		ChartPanel graphe = new ChartPanel(new Graphe().afficher());
+		
 		JPanel choixFluide = new JPanel(new BorderLayout());
-		JPanel choixCapteur = new JPanel(new BorderLayout());
-		JPanel choixPeriode = new JPanel(new BorderLayout());
-		JButton appliquer = new JButton("Appliquer");
 		JComboBox<TypeCapteur> fluides = new JComboBox<>(TypeCapteur.values());
-		JScrollPane capteurs = new JScrollPane();
-		
-		Box titreBox = new Box(BoxLayout.Y_AXIS);
-		
-		titreBox.add(titre);
-		titreBox.add(Box.createHorizontalGlue()); //J'essaye de créer un espace entre le titre et les autres composants(ça ne marche pas...)
-		
-		//ajout de composants pour le choix des fluides
-		choixFluide.add(new JLabel("Type Fluide:"), BorderLayout.PAGE_START);
+		choixFluide.add(new JLabel("Fluide:"), BorderLayout.PAGE_START);
 		choixFluide.add(fluides, BorderLayout.CENTER);
 		
-		//ajout de composants pour le choix d'un capteur
-
-		
-		choixCapteur.add(new JLabel("Capteurs(max 3):"),BorderLayout.PAGE_START);
+		JPanel choixCapteur = new JPanel(new BorderLayout());
+		JList<String> listeCapteurs = new JList(new String[] {"toto","tata","tete"}); //Pour tester
+		JScrollPane capteurs = new JScrollPane(listeCapteurs,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		choixCapteur.add(new JLabel("Capteurs(max 3)"),BorderLayout.PAGE_START);
 		choixCapteur.add(capteurs, BorderLayout.CENTER);
 		
-		//de meme pour la periode
-		choixPeriode.add(new JLabel("Periode:"), BorderLayout.PAGE_START);
-		choixPeriode.add(appliquer,BorderLayout.LINE_END);
+		JPanel choixPeriode = new JPanel(new BorderLayout());
+		JPanel flowPanel = new JPanel(new FlowLayout());
+		Box dateMin = new Box(BoxLayout.Y_AXIS);
+		JFormattedTextField min = new JFormattedTextField();
+		dateMin.add(new Label("Début:"));
+		dateMin.add(min);
+		Box dateMax = new Box(BoxLayout.Y_AXIS);
+		dateMax.add(new Label("Fin:"));
+		JFormattedTextField max = new JFormattedTextField();
+		dateMax.add(max);
+		JButton appliquer = new JButton("Appliquer");
+		flowPanel.add(dateMin);
+		flowPanel.add(dateMax);
+		choixPeriode.add(new Label("Periode:"), BorderLayout.PAGE_START);
+		choixPeriode.add(flowPanel, BorderLayout.LINE_START);
 		
-		//ajout des trois paneux de choix dans le paneu d'options
-		optionPanel.add(choixFluide);
-		optionPanel.add(choixCapteur);
-		optionPanel.add(choixPeriode);
+		options.add(choixFluide);
+		options.add(choixCapteur);
+		options.add(choixPeriode);
+		options.add(appliquer);
+
+		panel.add(new JLabel("Analyseur de données"), BorderLayout.PAGE_START);
+		panel.add(options, BorderLayout.LINE_START);
+		panel.add(graphe, BorderLayout.LINE_END);
 		
-		panel2.add(optionPanel);
-		panel2.add(new JButton("toto")); // Le bouton répresente le graphe 
-		panel.add(titre,BorderLayout.PAGE_START);
-		panel.add(panel2, BorderLayout.CENTER);
-	
+
 		return panel;
 	}
 	/**
@@ -172,12 +168,13 @@ public class ManagerIHM implements Runnable {
 	
 	private void fenetrePrincipale() {
 		JFrame frame = new JFrame("NeoCampus");
-		JPanel base = new JPanel();
+		JPanel base = new JPanel(new BorderLayout());
 		JPanel analysePanel = new JPanel(new BorderLayout());
 		JPanel arborescence = arborescenceCapteurs();
 		JPanel donnees = analyseurDonnees();
 		JPanel tempsReel = analyseurTempsReel();
 		
+		donnees.setMinimumSize(new Dimension(800, 300));
 		JSplitPane barre1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,arborescence,analysePanel);
 		JSplitPane barre2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,donnees,tempsReel);
 
@@ -186,14 +183,28 @@ public class ManagerIHM implements Runnable {
 		
 //		JFrame parametrage
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Dimension currentScreenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
+		Dimension currentScreenSize = new Dimension(1000,600); // s'on enleve frame.pack() alors c'est la taille de la fenetre 
 		frame.setSize(currentScreenSize);
 		frame.getContentPane().add(base);
-		frame.pack();
-		frame.setResizable(false); // l'utilisateur ne peut pas modifier la taille de la fenetre
+//		frame.pack();
+		frame.setResizable(true); // l'utilisateur ne peut pas modifier la taille de la fenetre
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
 		
+	}
+	
+
+	//Méthode appelée lors du clic de souris
+	// Creer une nouvelle classe pour le bouton appliquer et faire un bouton personnalisé
+	public void mouseClickedGraphe(MouseEvent event) { 
+		Map<Capteur,List<Mesure>> donnees = new TreeMap<Capteur,List<Mesure>>();
+		for (Capteur c : this.managerDonnees.getCapteursConnectes()){
+			if (c.getType().equals(TypeCapteur.EAU)){
+
+				donnees.put(c, this.managerDonnees.mesuresPeriode(c,new Date(),new Date()));
+			}
+		}
+		this.analyseurDonnees().add(new ChartPanel(new Graphe(donnees).afficher()),BorderLayout.LINE_END);
 	}
 	
 	public void run() {

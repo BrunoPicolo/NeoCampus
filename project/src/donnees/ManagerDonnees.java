@@ -27,6 +27,7 @@ public class ManagerDonnees {
 	private String motDePasse;
 	private CapteursTableModel capteursTableModel;
 	
+	
 	/**
 	 * @param adresse
 	 * @param identifiant
@@ -114,8 +115,15 @@ public class ManagerDonnees {
 		}
 	}
 	
-	public List<Double> mesuresPeriode(Capteur capteur, Date dateMin, Date DateMax) {
-		List<Double> mesures = new ArrayList<>();
+	// Creation d'une classe Mesure pour le couple (Valeur,Date)
+	public List<Mesure> mesuresPeriode(Capteur capteur, Date dateMin, Date DateMax) {
+		List<Mesure> mesures = new ArrayList<>();
+		// TEMPORAIRE SIMULATION DE DONNEES SANS BDD
+		for (int i = 0 ; i<5 ; i++) {
+			Mesure m = new Mesure(i+0.3,new Date()) ;
+			mesures.add(m);
+		}
+		// FIN TEMPORAIRE
 		// TODO
 		return mesures;
 	}
