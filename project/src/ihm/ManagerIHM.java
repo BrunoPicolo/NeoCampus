@@ -35,6 +35,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.ListSelectionModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 
@@ -121,6 +122,7 @@ public class ManagerIHM implements Runnable {
 		
 		JPanel choixCapteur = new JPanel(new BorderLayout());
 		JList<String> listeCapteurs = new JList();
+		listeCapteurs.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		JScrollPane capteurs = new JScrollPane(listeCapteurs,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		choixCapteur.add(new JLabel("Capteurs(max 3)"),BorderLayout.PAGE_START);
