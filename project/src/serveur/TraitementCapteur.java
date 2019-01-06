@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.SocketException;
 
-import donnees.Capteur;
 import donnees.ManagerDonnees;
 import donnees.TypeCapteur;
 

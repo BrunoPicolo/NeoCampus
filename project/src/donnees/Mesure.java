@@ -3,12 +3,12 @@ package donnees;
 import java.util.Date;
 
 public class Mesure {
-	private Double valeur ;
-	private Date date ;
+	private Double valeur;
+	private Date date;
 
-	public Mesure(Double valeur,Date date) {
-		this.valeur=valeur;
-		this.date=date;
+	public Mesure(Double valeur, Date date) {
+		this.valeur = valeur;
+		this.date = date;
 	}
 
 	public Double getValeur() {
@@ -26,5 +26,4 @@ public class Mesure {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-
 }

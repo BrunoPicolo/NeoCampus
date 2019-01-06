@@ -7,17 +7,13 @@ package ihm;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
 import java.awt.Label;
-import java.awt.event.MouseEvent;
-import java.util.Comparator;
+import java.awt.event.ItemEvent;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -31,12 +27,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeModel;
-
-import org.jfree.chart.ChartPanel;
 
 import donnees.Capteur;
 import donnees.ManagerDonnees;
@@ -55,8 +45,8 @@ public class ManagerIHM implements Runnable {
 	private ManagerDonnees managerDonnees;
 	private CapteursTableModel capteursTableModel;
 	private CapteursTableCellRenderer capteursTableCellRenderer;
-	private int nbCapteurs = 0;
 	private Serveur serveur;
+	private Graphe graphe;
 
 	
 	/**
@@ -107,7 +97,7 @@ public class ManagerIHM implements Runnable {
 		JPanel panel = new JPanel(new BorderLayout());
 		
 		Box options = new Box(BoxLayout.Y_AXIS);
-		ChartPanel graphe = new ChartPanel(new Graphe().afficher());
+		graphe = new Graphe();
 		
 		JPanel choixFluide = new JPanel(new BorderLayout());
 		JComboBox<TypeCapteur> fluides = new JComboBox<>(TypeCapteur.values());
@@ -115,7 +105,9 @@ public class ManagerIHM implements Runnable {
 		choixFluide.add(fluides, BorderLayout.CENTER);
 		
 		JPanel choixCapteur = new JPanel(new BorderLayout());
-		JList<String> listeCapteurs = new JList(new String[] {"toto","tata","tete"}); //Pour tester
+		JList<Capteur> listeCapteurs = new JList<>();
+		listeCapteurs.setCellRenderer(new CapteursListCellRenderer());
+		listeCapteurs.setSelectionModel(new CapteursListSelectionModel());
 		JScrollPane capteurs = new JScrollPane(listeCapteurs,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		choixCapteur.add(new JLabel("Capteurs(max 3)"),BorderLayout.PAGE_START);
@@ -132,6 +124,7 @@ public class ManagerIHM implements Runnable {
 		JFormattedTextField max = new JFormattedTextField();
 		dateMax.add(max);
 		JButton appliquer = new JButton("Appliquer");
+		appliquer.setEnabled(false);
 		flowPanel.add(dateMin);
 		flowPanel.add(dateMax);
 		choixPeriode.add(new Label("Periode:"), BorderLayout.PAGE_START);
@@ -146,6 +139,24 @@ public class ManagerIHM implements Runnable {
 		panel.add(options, BorderLayout.LINE_START);
 		panel.add(graphe, BorderLayout.LINE_END);
 		
+		fluides.addItemListener(event -> {
+			if (event.getStateChange() == ItemEvent.SELECTED) {
+				TypeCapteur type = (TypeCapteur)event.getItem();
+				itemChangedChoixFluide(type, listeCapteurs);
+			}
+		});
+		listeCapteurs.addListSelectionListener(event -> {
+			if (!event.getValueIsAdjusting()) {
+				JList<Capteur> source = (JList<Capteur>)event.getSource();
+				int[] selections = source.getSelectedIndices();
+				appliquer.setEnabled(selections.length != 0);
+			}
+		});
+		appliquer.addActionListener(event -> {
+			 mouseClickedAppliquer(listeCapteurs.getSelectedValuesList());
+		});
+		// valeurs par défaut de la liste de capteurs
+		itemChangedChoixFluide(fluides.getItemAt(0), listeCapteurs);
 
 		return panel;
 	}
@@ -170,7 +181,7 @@ public class ManagerIHM implements Runnable {
 		JFrame frame = new JFrame("NeoCampus");
 		JPanel base = new JPanel(new BorderLayout());
 		JPanel analysePanel = new JPanel(new BorderLayout());
-		JPanel arborescence =arborescenceCapteurs();
+		JPanel arborescence = arborescenceCapteurs();
 		JPanel donnees = analyseurDonnees();
 		JPanel tempsReel = analyseurTempsReel();
 		
@@ -194,23 +205,27 @@ public class ManagerIHM implements Runnable {
 	}
 	
 
-	//Méthode appelée lors du clic de souris
-	// Creer une nouvelle classe pour le bouton appliquer et faire un bouton personnalisé
-	public void mouseClickedGraphe(MouseEvent event) { 
-		Map<Capteur,List<Mesure>> donnees = new TreeMap<Capteur,List<Mesure>>();
-		for (Capteur c : this.managerDonnees.getCapteursConnectes()){
-			if (c.getType().equals(TypeCapteur.EAU)){
-
-				donnees.put(c, this.managerDonnees.mesuresPeriode(c,new Date(),new Date()));
-			}
+	// Méthode appelée lors du clic de souris sur le bouton "Appliquer"
+	private void mouseClickedAppliquer(List<Capteur> capteurs) { 
+		Map<Capteur,List<Mesure>> donnees = new HashMap<>();
+		Date dateMin = new Date(2019 - 1900, 0, 1);
+		Date dateMax = new Date(2020 - 1900, 0, 1);
+		for (Capteur capteur : capteurs) {
+			donnees.put(capteur, this.managerDonnees.mesuresPeriode(capteur, dateMin, dateMax));
 		}
-		this.analyseurDonnees().add(new ChartPanel(new Graphe(donnees).afficher()),BorderLayout.LINE_END);
+		graphe.afficher(donnees);
+	}
+	
+	private void itemChangedChoixFluide(TypeCapteur type, JList<Capteur> listeCapteurs) {
+		List<Capteur> capteurs = managerDonnees.getCapteursBD(type.name());
+		Capteur[] tableauCapteurs = capteurs.toArray(new Capteur[0]);
+		listeCapteurs.setListData(tableauCapteurs);
 	}
 	
 	public void run() {
 		//fenetreDeConnexion();
 		// Mise en route du serveur
-		serveur = new Serveur(managerDonnees, "127.0.0.1", portDEcouteCapteurs);
+		serveur = new Serveur(managerDonnees, portDEcouteCapteurs);
 		Thread threadServeur = new Thread(serveur);
 		threadServeur.start();
 		fenetrePrincipale();

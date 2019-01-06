@@ -12,6 +12,8 @@ import java.util.LinkedHashSet;
  *
  */
 public class CapteursTableModel extends AbstractTableModel {
+	private static final long serialVersionUID = 1L;
+
 	private static final int COL_NUM = 6;
 	
 	private LinkedHashSet<Capteur> listeCapteurs;

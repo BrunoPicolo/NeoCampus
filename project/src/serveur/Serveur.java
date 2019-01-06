@@ -3,12 +3,9 @@
  */
 package serveur;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 
 import donnees.ManagerDonnees;
 
@@ -18,7 +15,6 @@ import donnees.ManagerDonnees;
  */
 public class Serveur implements Runnable {
 	private ManagerDonnees managerDonnees;
-	private String adresse; // TODO supprimer l'adresse ?
 	private int port;
 	
 	
@@ -27,10 +23,9 @@ public class Serveur implements Runnable {
 	 * @param adresse
 	 * @param port
 	 */
-	public Serveur(ManagerDonnees managerDonnees, String adresse, int port) {
+	public Serveur(ManagerDonnees managerDonnees, int port) {
 		super();
 		this.managerDonnees = managerDonnees;
-		this.adresse = adresse;
 		this.port = port;
 	}
 	
