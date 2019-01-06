@@ -4,6 +4,7 @@
 package ihm;
 
 import java.awt.BorderLayout;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,10 @@ import javax.swing.JPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.labels.StandardXYSeriesLabelGenerator;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.FixedMillisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -26,12 +31,14 @@ import donnees.TypeCapteur;
 public class Graphe extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
-	private JFreeChart graph;
+	private JFreeChart graphe;
 	private TimeSeriesCollection dataCollection = new TimeSeriesCollection();
+	private DateAxis dateAxis =  new DateAxis();
 	
 	public Graphe() {
 		super(new BorderLayout());
-		graph = ChartFactory.createXYLineChart("Analyse données","Dates de relevés","Capteur non défini", dataCollection);
+		dateAxis.setDateFormatOverride(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss"));
+		nettoyer();
 	}
 	
 	public void afficher(Map<Capteur, List<Mesure>> donnees) {
@@ -50,18 +57,22 @@ public class Graphe extends JPanel {
 			}
 			dataCollection.addSeries(series);
 		}
-		graph = ChartFactory.createXYLineChart("Analyse données", "Dates de relevés", type.getUnitee(), dataCollection);
+		graphe = ChartFactory.createTimeSeriesChart("Analyse données", "Dates de relevés", type.getUnitee(),
+				dataCollection, false, true, false);
+		XYPlot plot = graphe.getXYPlot();
+		plot.setDomainAxis(dateAxis);
+		
 		removeAll();
 		revalidate();
-		this.add(new ChartPanel(graph));
+		this.add(new ChartPanel(graphe));
 		this.repaint();
 	}
 
 	public void nettoyer() {
 		dataCollection.removeAllSeries();
-		graph = ChartFactory.createXYLineChart("Analyse données", "Dates de relevés", "", dataCollection);
+		graphe = ChartFactory.createTimeSeriesChart("Analyse données", "Dates de relevés", "", dataCollection);
 		this.removeAll();
-		this.add(new ChartPanel(graph));
+		this.add(new ChartPanel(graphe));
 		this.repaint();
 	}
 }

@@ -1,6 +1,5 @@
 package ihm;
 
-import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JLabel;
@@ -12,13 +11,20 @@ import donnees.Capteur;
 public class CapteursListCellRenderer extends JLabel implements ListCellRenderer<Capteur> {
 	private static final long serialVersionUID = 1L;
 
+	public CapteursListCellRenderer() {
+		super();
+		setOpaque(true);
+	}
+	
 	@Override
 	public Component getListCellRendererComponent(JList<? extends Capteur> liste, Capteur capteur,
 			int indice, boolean selectionne, boolean focus) {
 		if (selectionne) {
-            setForeground(Color.BLUE);
+			setBackground(liste.getSelectionBackground());
+            setForeground(liste.getSelectionForeground());
         } else {
-            setForeground(Color.BLACK);
+        	setBackground(liste.getBackground());
+            setForeground(liste.getForeground());
         }
 		setText(capteur.getNom());
 		return this;
