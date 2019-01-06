@@ -7,21 +7,13 @@ package ihm;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -35,15 +27,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeModel;
-
-import org.jfree.chart.ChartPanel;
 
 import donnees.Capteur;
 import donnees.ManagerDonnees;
@@ -62,9 +45,7 @@ public class ManagerIHM implements Runnable {
 	private ManagerDonnees managerDonnees;
 	private CapteursTableModel capteursTableModel;
 	private CapteursTableCellRenderer capteursTableCellRenderer;
-	private int nbCapteurs = 0;
 	private Serveur serveur;
-	
 	private Graphe graphe;
 
 	
@@ -166,7 +147,7 @@ public class ManagerIHM implements Runnable {
 		});
 		listeCapteurs.addListSelectionListener(event -> {
 			if (!event.getValueIsAdjusting()) {
-				JList source = (JList)event.getSource();
+				JList<Capteur> source = (JList<Capteur>)event.getSource();
 				int[] selections = source.getSelectedIndices();
 				appliquer.setEnabled(selections.length != 0);
 			}
@@ -227,10 +208,11 @@ public class ManagerIHM implements Runnable {
 	// Méthode appelée lors du clic de souris sur le bouton "Appliquer"
 	private void mouseClickedAppliquer(List<Capteur> capteurs) { 
 		Map<Capteur,List<Mesure>> donnees = new HashMap<>();
+		Date dateMin = new Date(2019 - 1900, 0, 1);
+		Date dateMax = new Date(2020 - 1900, 0, 1);
 		for (Capteur capteur : capteurs) {
-			donnees.put(capteur, this.managerDonnees.mesuresPeriode(capteur, new Date(),new Date()));
+			donnees.put(capteur, this.managerDonnees.mesuresPeriode(capteur, dateMin, dateMax));
 		}
-		System.out.println("Affichage: " + donnees);
 		graphe.afficher(donnees);
 	}
 	
@@ -243,7 +225,7 @@ public class ManagerIHM implements Runnable {
 	public void run() {
 		//fenetreDeConnexion();
 		// Mise en route du serveur
-		serveur = new Serveur(managerDonnees, "127.0.0.1", portDEcouteCapteurs);
+		serveur = new Serveur(managerDonnees, portDEcouteCapteurs);
 		Thread threadServeur = new Thread(serveur);
 		threadServeur.start();
 		fenetrePrincipale();

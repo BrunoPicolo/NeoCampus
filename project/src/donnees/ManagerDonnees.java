@@ -22,9 +22,6 @@ import java.sql.*;
 public class ManagerDonnees {
 	private Connection connexionBD;
 	private LinkedHashSet<Capteur> capteursConnectes;
-	private String adresse;
-	private String identifiant;
-	private String motDePasse;
 	private CapteursTableModel capteursTableModel;
 	
 	
@@ -36,9 +33,6 @@ public class ManagerDonnees {
 	public ManagerDonnees(String adresse, String identifiant, String motDePasse,
 			LinkedHashSet<Capteur> capteursConnectes, CapteursTableModel capteursTableModel) { 
 		super();
-		this.adresse = adresse;
-		this.identifiant = identifiant;
-		this.motDePasse = motDePasse;
 		this.capteursConnectes = capteursConnectes;
 		this.capteursTableModel = capteursTableModel;
 		try {
@@ -70,7 +64,7 @@ public class ManagerDonnees {
 					s.setString(1, nomCapteur);
 					s.setDouble(2, valeur);
 					Calendar cal = Calendar.getInstance();
-					s.setDate(3, new java.sql.Date(cal.getTimeInMillis()));
+					s.setTimestamp(3, new Timestamp(cal.getTimeInMillis()));
 					s.executeUpdate();
 					s.close();
 				} catch (SQLException e) {
@@ -114,15 +108,26 @@ public class ManagerDonnees {
 	}
 	
 	// Creation d'une classe Mesure pour le couple (Valeur,Date)
-	public List<Mesure> mesuresPeriode(Capteur capteur, Date dateMin, Date DateMax) {
+	public List<Mesure> mesuresPeriode(Capteur capteur, Date dateMin, Date dateMax) {
+		String requete = 
+				"SELECT NomCapteur, Valeur, DateReleve FROM Releves "
+				+ "WHERE DateReleve >= ? AND DateReleve <= ? "
+				+ "AND NomCapteur = ?";
+		
 		List<Mesure> mesures = new ArrayList<>();
-		// TEMPORAIRE SIMULATION DE DONNEES SANS BDD
-		for (int i = 0 ; i<5 ; i++) {
-			Mesure m = new Mesure(i+0.3,new Date()) ;
-			mesures.add(m);
+		try {
+			PreparedStatement s = connexionBD.prepareStatement(requete);
+			s.setTimestamp(1, new Timestamp(dateMin.getTime()));
+			s.setTimestamp(2, new Timestamp(dateMax.getTime()));
+			s.setString(3, capteur.getNom());
+			ResultSet res = s.executeQuery();
+			while (res.next()) {
+				mesures.add(new Mesure(res.getDouble("Valeur"), res.getTimestamp("DateReleve")));
+			}
+			res.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		// FIN TEMPORAIRE
-		// TODO
 		return mesures;
 	}
 	
@@ -166,9 +171,5 @@ public class ManagerDonnees {
 				capteursTableModel.fireTableDataChanged();
 			}
 		}
-	}
-	public LinkedHashSet<Capteur> getListeCapteurs() {
-		// TODO Auto-generated method stub
-		return capteursConnectes;
 	}
 }

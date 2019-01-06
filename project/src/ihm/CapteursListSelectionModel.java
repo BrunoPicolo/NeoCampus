@@ -3,6 +3,8 @@ package ihm;
 import javax.swing.DefaultListSelectionModel;
 
 public class CapteursListSelectionModel extends DefaultListSelectionModel {
+	private static final long serialVersionUID = 1L;
+
 	private int nbSelectionnes() {
 		int indiceMin = getMinSelectionIndex();
 		int indiceMax = getMaxSelectionIndex();

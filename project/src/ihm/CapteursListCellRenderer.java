@@ -10,6 +10,8 @@ import javax.swing.ListCellRenderer;
 import donnees.Capteur;
 
 public class CapteursListCellRenderer extends JLabel implements ListCellRenderer<Capteur> {
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public Component getListCellRendererComponent(JList<? extends Capteur> liste, Capteur capteur,
 			int indice, boolean selectionne, boolean focus) {

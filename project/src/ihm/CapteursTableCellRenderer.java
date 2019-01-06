@@ -8,6 +8,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import donnees.Capteur;
 
 public class CapteursTableCellRenderer extends DefaultTableCellRenderer {
+	private static final long serialVersionUID = 1L;
+	
 	private LinkedHashSet<Capteur> listeCapteurs;
 	
 	public CapteursTableCellRenderer(LinkedHashSet<Capteur> listeCapteurs) {
