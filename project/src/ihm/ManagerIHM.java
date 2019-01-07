@@ -28,6 +28,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 
+import org.w3c.dom.events.EventException;
+
 import donnees.Capteur;
 import donnees.ManagerDonnees;
 import donnees.Mesure;
@@ -160,6 +162,7 @@ public class ManagerIHM implements Runnable {
 
 		return panel;
 	}
+	
 	/**
 	 * 
 	 * @return
@@ -169,11 +172,18 @@ public class ManagerIHM implements Runnable {
 		Box titreBox = new Box(BoxLayout.Y_AXIS);
 		JLabel titre = new JLabel("Arborescence Capteurs");
 		Arbre arbre = new Arbre(managerDonnees);
-
+		JButton actualiserArbre = new JButton("Actualiser");
+		
 		titreBox.add(titre);
 		titreBox.add(Box.createVerticalStrut(10));
 		panel.add(titreBox,BorderLayout.PAGE_START);
 		panel.add(arbre);
+		panel.add(actualiserArbre, BorderLayout.PAGE_END);
+		
+		actualiserArbre.addActionListener( event -> {
+			arbre.actualiserArbre(managerDonnees);
+		});
+		
 		return panel;
 	}
 	

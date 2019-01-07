@@ -23,7 +23,6 @@ import donnees.TypeCapteur;
 public class Arbre extends JTree {
 	private static DefaultMutableTreeNode root = new DefaultMutableTreeNode("Campus");
 	private static DefaultTreeModel modele = new DefaultTreeModel(root);
-	
 	public Arbre(ManagerDonnees managerDonnees) {
 		super(modele);
 		for (TypeCapteur fluide : TypeCapteur.values()) {
@@ -71,6 +70,13 @@ private int indiceFils(final DefaultMutableTreeNode node,final String valeurFils
 			path.append("/" + capteur.getNom());
 			construireArbreAvecString(path.toString());
 			path.delete(0, path.length());
+		}
+	}
+
+	public void actualiserArbre(ManagerDonnees managerDonnees) {
+		for (TypeCapteur fluide : TypeCapteur.values()) {
+			List<Capteur> listeCapteurs = managerDonnees.getCapteursBD(fluide.toString());
+			remplirModele(listeCapteurs);
 		}
 	}
 }
