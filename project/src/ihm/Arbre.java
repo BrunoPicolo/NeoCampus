@@ -3,6 +3,7 @@ package ihm;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.TreeSet;
@@ -11,41 +12,53 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import donnees.Capteur;
 
 public class Arbre extends JTree {
-	private TreeSet<Capteur> capteurs = new TreeSet<>(new ComparateurCapteurs()); //ne sert à rien pour l'instant
 	private static DefaultMutableTreeNode root = new DefaultMutableTreeNode("Campus");
+	private static DefaultTreeModel model = new DefaultTreeModel(root);
 	
 	public Arbre() {
-		super(root);
-		this.setRootVisible(true);
+		super(model);
+		construireArbreAvecString(model, "Batiment 1/Etage 2/CapteurToto");
+		construireArbreAvecString(model, "Batiment 1/Etage 1/CapteurLala");
+		construireArbreAvecString(model, "Batiment 3/Etage 2/CapteurToto");
 	}
-	//Ne sert à rien
-	private static class ComparateurCapteurs implements Comparator<Capteur> {
-		@Override
-		public int compare(Capteur capteur1, Capteur capteur2) {
-			String batiment1 = capteur1.getBatiment();
-			String batiment2 = capteur2.getBatiment();
-			int comparateur = batiment1.compareTo(batiment2);
-			if (comparateur == 0) {
-				int etage1 = capteur1.getEtage();
-				int etage2 = capteur2.getEtage();
-				comparateur = etage1 - etage2;
-				if (comparateur == 0) {
-					String nomCapteur1 = capteur1.getNom();
-					String nomCapteur2 = capteur2.getNom();
-					return nomCapteur1.compareTo(nomCapteur2);
+
+	private void construireArbreAvecString(DefaultTreeModel modele, String str) {
+			DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+			String[] strings = str.split("/");
+			DefaultMutableTreeNode node = root;
+			for (String s : strings) {
+				int index = indiceFils(node,s);
+				if (index < 0) {
+					DefaultMutableTreeNode nouveauFils = new DefaultMutableTreeNode(s);
+					node.insert(nouveauFils, node.getChildCount());
+					node = nouveauFils;
+				}else {
+					node = (DefaultMutableTreeNode) node.getChildAt(index);
 				}
 				
 			}
-			return comparateur;
-		}
-		
 	}
+private int indiceFils(final DefaultMutableTreeNode node,final String valeurFils) {
+		Enumeration<DefaultMutableTreeNode> filsNode = node.children();
+		DefaultMutableTreeNode fils = null;
+		int index = -1;
+		
+		while (filsNode.hasMoreElements() && index < 0) {
+			fils = filsNode.nextElement();
+			if (fils.getUserObject() != null && valeurFils.equals(fils.getUserObject())) {
+				index = node.getIndex(fils);
+			}
+		}
+		return index;
+	}
+	//	A modifier pour retourner un tableau de strings contenant tous les paths
 	public void createNodes(LinkedHashSet<Capteur> listeCapteurs) {
 		ArrayList<String> strPath = new ArrayList<>();
 		for (Capteur capteur : listeCapteurs) {
