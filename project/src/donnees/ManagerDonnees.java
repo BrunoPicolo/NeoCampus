@@ -48,6 +48,11 @@ public class ManagerDonnees {
 			throw new Error("Probleme connexion BD: " + e.getMessage());
 		}
 	}
+	
+	public LinkedHashSet<Capteur> getCapteursConnectes() {
+		return capteursConnectes;
+	}
+	
 	/**
 	 * 
 	 * @param nomCapteur
