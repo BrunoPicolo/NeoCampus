@@ -92,5 +92,4 @@ public class CapteursTableModel extends AbstractTableModel {
 		
 		return null;
 	}
-
 }
