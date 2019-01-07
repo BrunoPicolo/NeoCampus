@@ -92,4 +92,8 @@ public class CapteursTableModel extends AbstractTableModel {
 		
 		return null;
 	}
+	
+	public LinkedHashSet<Capteur> getListeCapteurs() {
+		return listeCapteurs;
+	}
 }

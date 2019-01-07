@@ -168,7 +168,7 @@ public class ManagerIHM implements Runnable {
 		JPanel panel = new JPanel(new BorderLayout());
 		Box titreBox = new Box(BoxLayout.Y_AXIS);
 		JLabel titre = new JLabel("Arborescence Capteurs");
-		Arbre arbre = new Arbre();
+		Arbre arbre = new Arbre(managerDonnees);
 
 		titreBox.add(titre);
 		titreBox.add(Box.createVerticalStrut(10));

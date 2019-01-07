@@ -17,20 +17,23 @@ import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import donnees.Capteur;
+import donnees.ManagerDonnees;
+import donnees.TypeCapteur;
 
 public class Arbre extends JTree {
 	private static DefaultMutableTreeNode root = new DefaultMutableTreeNode("Campus");
-	private static DefaultTreeModel model = new DefaultTreeModel(root);
+	private static DefaultTreeModel modele = new DefaultTreeModel(root);
 	
-	public Arbre() {
-		super(model);
-		construireArbreAvecString(model, "Batiment 1/Etage 2/CapteurToto");
-		construireArbreAvecString(model, "Batiment 1/Etage 1/CapteurLala");
-		construireArbreAvecString(model, "Batiment 3/Etage 2/CapteurToto");
+	public Arbre(ManagerDonnees managerDonnees) {
+		super(modele);
+		for (TypeCapteur fluide : TypeCapteur.values()) {
+			List<Capteur> listeCapteurs = managerDonnees.getCapteursBD(fluide.toString());
+			remplirModele(listeCapteurs);
+		}
 	}
 
-	private void construireArbreAvecString(DefaultTreeModel modele, String str) {
-			DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+	private void construireArbreAvecString(String str) {
+			DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.modele.getRoot();
 			String[] strings = str.split("/");
 			DefaultMutableTreeNode node = root;
 			for (String s : strings) {
@@ -45,6 +48,7 @@ public class Arbre extends JTree {
 				
 			}
 	}
+	
 private int indiceFils(final DefaultMutableTreeNode node,final String valeurFils) {
 		Enumeration<DefaultMutableTreeNode> filsNode = node.children();
 		DefaultMutableTreeNode fils = null;
@@ -58,17 +62,15 @@ private int indiceFils(final DefaultMutableTreeNode node,final String valeurFils
 		}
 		return index;
 	}
-	//	A modifier pour retourner un tableau de strings contenant tous les paths
-	public void createNodes(LinkedHashSet<Capteur> listeCapteurs) {
-		ArrayList<String> strPath = new ArrayList<>();
+
+	public void remplirModele(List<Capteur> listeCapteurs) {
+		StringBuilder path = new StringBuilder();
 		for (Capteur capteur : listeCapteurs) {
-			strPath.add(capteur.getBatiment());
-			strPath.add("Etage " + capteur.getEtage());
-			strPath.add(capteur.getNom());
-			TreePath path = new TreePath(strPath);
-			root.add((MutableTreeNode) ((DefaultMutableTreeNode)path.getLastPathComponent()).
-				       getUserObject());
+			path.append(capteur.getBatiment());
+			path.append("/" + "Etage " + capteur.getEtage());
+			path.append("/" + capteur.getNom());
+			construireArbreAvecString(path.toString());
+			path.delete(0, path.length());
 		}
-		
 	}
 }

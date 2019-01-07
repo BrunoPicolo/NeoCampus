@@ -159,10 +159,6 @@ public class ManagerDonnees {
 		return capteurs;
 	}
 	
-	public LinkedHashSet<Capteur> getCapteursConnectes() {
-		return capteursConnectes;
-	}
-	
 	public synchronized void deconnecterCapteur(String nomCapteur) {
 		for(Iterator<Capteur> capteurIter = capteursConnectes.iterator(); capteurIter.hasNext();) {
 			Capteur capteur = capteurIter.next();
