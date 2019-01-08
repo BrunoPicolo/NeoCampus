@@ -198,11 +198,14 @@ public class ManagerIHM implements Runnable {
 		titreBox.add(titre);
 		titreBox.add(Box.createVerticalStrut(10));
 		panel.add(titreBox,BorderLayout.PAGE_START);
-		panel.add(arbre);
+		panel.add(arbre,1);
 		panel.add(actualiserArbre, BorderLayout.PAGE_END);
 		
 		actualiserArbre.addActionListener(event -> {
-			arbre.actualiserArbre();
+			panel.remove(1);
+			panel.add(new Arbre(managerDonnees),1);
+			panel.revalidate();
+			panel.repaint();
 		});
 		
 		return panel;
