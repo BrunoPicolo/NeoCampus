@@ -10,6 +10,7 @@ import java.awt.FlowLayout;
 import java.awt.Label;
 import java.awt.event.ItemEvent;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -128,8 +129,10 @@ public class ManagerIHM implements Runnable {
 		p.put("text.today", "Today");
 		p.put("text.month", "Month");
 		p.put("text.year", "Year");
-		model.setDate(2018, 1, 1);
-		model2.setDate(2018, 1, 1);
+		Date today = new Date();
+		// TODO Gerer le temps secondes (c'est le foutoir)
+		model.setDate(today.getYear()+1900,today.getMonth(),today.getDate());
+		model2.setDate(today.getYear()+1900,today.getMonth(),today.getDate());
 		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
 		JDatePanelImpl datePanel2 = new JDatePanelImpl(model2, p);
 		JDatePickerImpl dateMin = new JDatePickerImpl(datePanel, new DateLabelFormatter());
