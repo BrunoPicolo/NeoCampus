@@ -19,9 +19,11 @@ public class Arbre extends JTree {
 	private static DefaultMutableTreeNode root = new DefaultMutableTreeNode("Campus");
 	private static DefaultTreeModel modele = new DefaultTreeModel(root);
 	
+	private ManagerDonnees managerDonnees;
 	
 	public Arbre(ManagerDonnees managerDonnees) {
 		super(modele);
+		this.managerDonnees = managerDonnees;
 		this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		this.addTreeSelectionListener(new selectionListener());
 		
@@ -46,6 +48,7 @@ public class Arbre extends JTree {
 		}
 		
 	}
+	
 	private void construireArbreAvecString(String str) {
 			DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.modele.getRoot();
 			String[] strings = str.split("/");
@@ -92,8 +95,7 @@ public class Arbre extends JTree {
 		}
 	}
 
-	public void actualiserArbre(ManagerDonnees managerDonnees) {
-		
+	public void actualiserArbre() {
 		for (TypeCapteur fluide : TypeCapteur.values()) {
 			List<Capteur> listeCapteurs = managerDonnees.getCapteursBD(fluide.toString());
 			remplirModele(listeCapteurs);

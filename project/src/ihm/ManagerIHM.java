@@ -201,9 +201,9 @@ public class ManagerIHM implements Runnable {
 		panel.add(arbre);
 		panel.add(actualiserArbre, BorderLayout.PAGE_END);
 		
-		actualiserArbre.addActionListener(event -> 
-			arbre.actualiserArbre(managerDonnees)
-		);
+		actualiserArbre.addActionListener(event -> {
+			arbre.actualiserArbre();
+		});
 		
 		return panel;
 	}
