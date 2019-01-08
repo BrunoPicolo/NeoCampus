@@ -9,11 +9,14 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Label;
 import java.awt.event.ItemEvent;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -28,6 +31,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
 import org.w3c.dom.events.EventException;
 
 import donnees.Capteur;
@@ -115,13 +121,28 @@ public class ManagerIHM implements Runnable {
 		choixCapteur.add(new JLabel("Capteurs(max 3)"),BorderLayout.PAGE_START);
 		choixCapteur.add(capteurs, BorderLayout.CENTER);
 		
+		// Date picker
+		UtilDateModel model = new UtilDateModel();
+		UtilDateModel model2 = new UtilDateModel();
+		Properties p = new Properties();
+		p.put("text.today", "Today");
+		p.put("text.month", "Month");
+		p.put("text.year", "Year");
+		model.setDate(2018, 1, 1);
+		model2.setDate(2018, 1, 1);
+		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+		JDatePanelImpl datePanel2 = new JDatePanelImpl(model2, p);
+		JDatePickerImpl dateMin = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+		JDatePickerImpl dateMax = new JDatePickerImpl(datePanel2, new DateLabelFormatter());
+		// Fin Date Picker
+		
 		JPanel choixPeriode = new JPanel(new BorderLayout());
 		JPanel flowPanel = new JPanel(new FlowLayout());
-		Box dateMin = new Box(BoxLayout.Y_AXIS);
+		//Box dateMin = new Box(BoxLayout.Y_AXIS);
 		JFormattedTextField min = new JFormattedTextField();
 		dateMin.add(new Label("Début:"));
 		dateMin.add(min);
-		Box dateMax = new Box(BoxLayout.Y_AXIS);
+		//Box dateMax = new Box(BoxLayout.Y_AXIS);
 		dateMax.add(new Label("Fin:"));
 		JFormattedTextField max = new JFormattedTextField();
 		dateMax.add(max);
