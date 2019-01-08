@@ -247,6 +247,7 @@ public class ManagerIHM implements Runnable {
 	 */
 	public static void main(String[] args) {
 		LinkedHashSet<Capteur> listeCapteurs = new LinkedHashSet<>();
+		// TODO declarer a l'intérieur des méthodes créant l'IHM
 		CapteursTableModel capteursTableModel = new CapteursTableModel(listeCapteurs);
 		CapteursTableCellRenderer capteursTableCellRenderer = new CapteursTableCellRenderer(listeCapteurs);
 		ManagerDonnees managerDonnees = new ManagerDonnees("localhost:3306", "root", "",
