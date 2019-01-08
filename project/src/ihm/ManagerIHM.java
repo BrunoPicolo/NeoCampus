@@ -228,7 +228,7 @@ public class ManagerIHM implements Runnable {
 		Dimension currentScreenSize = new Dimension(1000,600); // s'on enleve frame.pack() alors c'est la taille de la fenetre 
 		frame.setSize(currentScreenSize);
 		frame.getContentPane().add(base);
-//		frame.pack();
+		frame.pack();
 		frame.setResizable(true); // l'utilisateur ne peut pas modifier la taille de la fenetre
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);

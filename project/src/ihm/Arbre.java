@@ -1,8 +1,18 @@
 package ihm;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -10,13 +20,16 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.mysql.cj.exceptions.FeatureNotAvailableException;
+import com.sun.corba.se.impl.ior.GenericTaggedComponent;
+
 import donnees.Capteur;
 import donnees.ManagerDonnees;
 import donnees.TypeCapteur;
 
 public class Arbre extends JTree {
 	private static final long serialVersionUID = 1L;
-	private static DefaultMutableTreeNode root = new DefaultMutableTreeNode("Campus");
+	private static DefaultMutableTreeNode root = new DefaultMutableTreeNode("/");
 	private static DefaultTreeModel modele = new DefaultTreeModel(root);
 	
 	private ManagerDonnees managerDonnees;
@@ -32,6 +45,37 @@ public class Arbre extends JTree {
 			remplirModele(listeCapteurs);
 		}
 	}
+	//TODO refaire
+	private static void fenetreChangementSeuils(int x, int y) {
+		JFrame frame = new JFrame("SEUIL");
+		JPanel base = new JPanel(new BorderLayout());
+		JPanel boutons = new JPanel(new FlowLayout());
+		Box options = new Box(BoxLayout.Y_AXIS);
+		JPanel setMin = new JPanel(new FlowLayout());
+		JPanel setMax = new JPanel(new FlowLayout());
+		JTextField saisieMin = new JTextField();
+		
+		setMin.add(new JLabel("Seuil min"));
+		setMin.add(saisieMin);
+		setMax.add(new JLabel("Seuil max"));
+		
+		JButton accepter = new JButton("Acepter");
+		JButton canceler = new JButton("Canceler");
+		
+		options.add(setMax);
+		options.add(setMin);
+		boutons.add(accepter);
+		boutons.add(canceler);
+		
+		base.add(boutons, BorderLayout.PAGE_END);
+		base.add(options, BorderLayout.PAGE_START);
+		frame.add(base);
+		
+		frame.setMinimumSize(new Dimension(300, 200));
+		frame.setLocation(x, y);
+		frame.setVisible(true);
+		frame.setAlwaysOnTop(true);
+	}
 	
 	private static class selectionListener implements TreeSelectionListener {
 
@@ -41,9 +85,7 @@ public class Arbre extends JTree {
 		    DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 		    String selectedNodeName = selectedNode.toString();
 		    if (selectedNode.isLeaf()) {
-		    	//TODO action à ajouter
-		    	System.out.println(selectedNodeName);
-
+		    	fenetreChangementSeuils(20, 20); //TODO  trouver le bon placement
 		    }	
 		}
 		
@@ -58,9 +100,6 @@ public class Arbre extends JTree {
 				int index = indiceFils(node,strings[i]);
 				if (index < 0) {
 					DefaultMutableTreeNode nouveauFils = new DefaultMutableTreeNode(strings[i]);
-					if (i == size-1) {
-						///TODO ...
-					}
 					node.insert(nouveauFils, node.getChildCount());
 					node = nouveauFils;
 				}else {
