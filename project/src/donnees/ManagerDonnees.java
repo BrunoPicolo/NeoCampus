@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.function.Consumer;
 
 import ihm.CapteursTableModel;
 
@@ -23,6 +24,7 @@ public class ManagerDonnees {
 	private Connection connexionBD;
 	private LinkedHashSet<Capteur> capteursConnectes;
 	private CapteursTableModel capteursTableModel;
+	private Consumer<Capteur> ajoutCapteurListener = null;
 	
 	
 	/**
@@ -96,6 +98,9 @@ public class ManagerDonnees {
 		capteursConnectes.add(capteur);
 		capteur.setModele(capteursTableModel);
 		capteursTableModel.fireTableDataChanged();
+		if (ajoutCapteurListener != null) {
+			ajoutCapteurListener.accept(capteur);
+		}
 		try {
 			PreparedStatement s = connexionBD.prepareStatement(requete);
 			s.setString(1, nom);
@@ -172,5 +177,9 @@ public class ManagerDonnees {
 				capteursTableModel.fireTableDataChanged();
 			}
 		}
+	}
+	
+	public void setAjoutCapteurListener(Consumer<Capteur> listener) {
+		ajoutCapteurListener = listener;
 	}
 }
