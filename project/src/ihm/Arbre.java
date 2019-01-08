@@ -4,8 +4,11 @@ import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
 
 import donnees.Capteur;
 import donnees.ManagerDonnees;
@@ -16,25 +19,45 @@ public class Arbre extends JTree {
 	private static DefaultMutableTreeNode root = new DefaultMutableTreeNode("Campus");
 	private static DefaultTreeModel modele = new DefaultTreeModel(root);
 	
-	private ManagerDonnees managerDonnees;
 	
 	public Arbre(ManagerDonnees managerDonnees) {
 		super(modele);
-		this.managerDonnees = managerDonnees;
+		this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		this.addTreeSelectionListener(new selectionListener());
+		
 		for (TypeCapteur fluide : TypeCapteur.values()) {
 			List<Capteur> listeCapteurs = managerDonnees.getCapteursBD(fluide.toString());
 			remplirModele(listeCapteurs);
 		}
 	}
+	
+	private static class selectionListener implements TreeSelectionListener {
 
+		@Override
+		public void valueChanged(TreeSelectionEvent se) {
+			JTree tree = (JTree) se.getSource();
+		    DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+		    String selectedNodeName = selectedNode.toString();
+		    if (selectedNode.isLeaf()) {
+		    	//TODO action à ajouter
+		    	System.out.println(selectedNodeName);
+
+		    }	
+		}
+		
+	}
 	private void construireArbreAvecString(String str) {
 			DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.modele.getRoot();
 			String[] strings = str.split("/");
 			DefaultMutableTreeNode node = root;
-			for (String s : strings) {
-				int index = indiceFils(node,s);
+			int size = strings.length;
+			for (int i=0; i < size;i++) {
+				int index = indiceFils(node,strings[i]);
 				if (index < 0) {
-					DefaultMutableTreeNode nouveauFils = new DefaultMutableTreeNode(s);
+					DefaultMutableTreeNode nouveauFils = new DefaultMutableTreeNode(strings[i]);
+					if (i == size-1) {
+						///TODO ...
+					}
 					node.insert(nouveauFils, node.getChildCount());
 					node = nouveauFils;
 				}else {
@@ -69,7 +92,8 @@ public class Arbre extends JTree {
 		}
 	}
 
-	public void actualiserArbre() {
+	public void actualiserArbre(ManagerDonnees managerDonnees) {
+		
 		for (TypeCapteur fluide : TypeCapteur.values()) {
 			List<Capteur> listeCapteurs = managerDonnees.getCapteursBD(fluide.toString());
 			remplirModele(listeCapteurs);
