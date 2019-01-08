@@ -133,19 +133,19 @@ public class ManagerIHM implements Runnable {
 		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
 		JDatePanelImpl datePanel2 = new JDatePanelImpl(model2, p);
 		JDatePickerImpl dateMin = new JDatePickerImpl(datePanel, new DateLabelFormatter());
-		JDatePickerImpl dateMax = new JDatePickerImpl(datePanel2, new DateLabelFormatter());
+		JDatePickerImpl dateMax = new JDatePickerImpl(datePanel2, new DateLabelFormatter());	
 		// Fin Date Picker
 		
 		JPanel choixPeriode = new JPanel(new BorderLayout());
 		JPanel flowPanel = new JPanel(new FlowLayout());
 		//Box dateMin = new Box(BoxLayout.Y_AXIS);
-		JFormattedTextField min = new JFormattedTextField();
-		dateMin.add(new Label("Début:"));
-		dateMin.add(min);
-		//Box dateMax = new Box(BoxLayout.Y_AXIS);
-		dateMax.add(new Label("Fin:"));
-		JFormattedTextField max = new JFormattedTextField();
-		dateMax.add(max);
+		// JFormattedTextField min = new JFormattedTextField();
+		// dateMin.add(new Label("Début:"));
+		// dateMin.add(min);
+		// Box dateMax = new Box(BoxLayout.Y_AXIS);
+		// dateMax.add(new Label("Fin:"));
+		// JFormattedTextField max = new JFormattedTextField();
+		// dateMax.add(max);
 		JButton appliquer = new JButton("Appliquer");
 		appliquer.setEnabled(false);
 		flowPanel.add(dateMin);
@@ -176,7 +176,7 @@ public class ManagerIHM implements Runnable {
 			}
 		});
 		appliquer.addActionListener(event -> {
-			 mouseClickedAppliquer(listeCapteurs.getSelectedValuesList());
+			 mouseClickedAppliquer(listeCapteurs.getSelectedValuesList(),dateMin,dateMax);
 		});
 		// valeurs par défaut de la liste de capteurs
 		itemChangedChoixFluide(fluides.getItemAt(0), listeCapteurs);
@@ -237,12 +237,14 @@ public class ManagerIHM implements Runnable {
 	
 
 	// Méthode appelée lors du clic de souris sur le bouton "Appliquer"
-	private void mouseClickedAppliquer(List<Capteur> capteurs) { 
+	private void mouseClickedAppliquer(List<Capteur> capteurs,
+			JDatePickerImpl dateMin,
+			JDatePickerImpl dateMax) { 
 		Map<Capteur,List<Mesure>> donnees = new HashMap<>();
-		Date dateMin = new Date(2019 - 1900, 0, 1);
-		Date dateMax = new Date(2020 - 1900, 0, 1);
+		Date dateMini = (Date) dateMin.getModel().getValue();
+		Date dateMaxi = (Date) dateMax.getModel().getValue();
 		for (Capteur capteur : capteurs) {
-			donnees.put(capteur, this.managerDonnees.mesuresPeriode(capteur, dateMin, dateMax));
+			donnees.put(capteur, this.managerDonnees.mesuresPeriode(capteur, dateMini, dateMaxi));
 		}
 		graphe.afficher(donnees);
 	}
