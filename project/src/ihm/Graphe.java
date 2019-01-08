@@ -14,9 +14,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.labels.StandardXYSeriesLabelGenerator;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.FixedMillisecond;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -64,15 +62,15 @@ public class Graphe extends JPanel {
 		
 		removeAll();
 		revalidate();
-		this.add(new ChartPanel(graphe));
-		this.repaint();
+		add(new ChartPanel(graphe));
+		repaint();
 	}
 
 	public void nettoyer() {
 		dataCollection.removeAllSeries();
 		graphe = ChartFactory.createTimeSeriesChart("Analyse données", "Dates de relevés", "", dataCollection);
-		this.removeAll();
-		this.add(new ChartPanel(graphe));
-		this.repaint();
+		removeAll();
+		add(new ChartPanel(graphe));
+		repaint();
 	}
 }
