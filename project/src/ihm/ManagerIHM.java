@@ -5,9 +5,12 @@ package ihm;
 
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Label;
+import java.awt.PopupMenu;
 import java.awt.event.ItemEvent;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -18,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -96,6 +100,7 @@ public class ManagerIHM implements Runnable {
 		
 		panel.add(titreBox, BorderLayout.PAGE_START);
 		panel.add(new JScrollPane(tableau),BorderLayout.CENTER);
+		panel.setBorder(BorderFactory.createLineBorder(Color.black));
 		return panel;
 	}
 	/**
@@ -121,6 +126,7 @@ public class ManagerIHM implements Runnable {
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		choixCapteur.add(new JLabel("Capteurs(max 3)"),BorderLayout.PAGE_START);
 		choixCapteur.add(capteurs, BorderLayout.CENTER);
+	
 		
 		// Date picker
 		UtilDateModel model = new UtilDateModel();
@@ -141,14 +147,6 @@ public class ManagerIHM implements Runnable {
 		
 		JPanel choixPeriode = new JPanel(new BorderLayout());
 		JPanel flowPanel = new JPanel(new FlowLayout());
-		//Box dateMin = new Box(BoxLayout.Y_AXIS);
-		// JFormattedTextField min = new JFormattedTextField();
-		// dateMin.add(new Label("Début:"));
-		// dateMin.add(min);
-		// Box dateMax = new Box(BoxLayout.Y_AXIS);
-		// dateMax.add(new Label("Fin:"));
-		// JFormattedTextField max = new JFormattedTextField();
-		// dateMax.add(max);
 		JButton appliquer = new JButton("Appliquer");
 		appliquer.setEnabled(false);
 		flowPanel.add(dateMin);
@@ -183,7 +181,7 @@ public class ManagerIHM implements Runnable {
 		});
 		// valeurs par défaut de la liste de capteurs
 		itemChangedChoixFluide(fluides.getItemAt(0), listeCapteurs);
-
+		panel.setBorder(BorderFactory.createLineBorder(Color.black));
 		return panel;
 	}
 	
@@ -198,41 +196,44 @@ public class ManagerIHM implements Runnable {
 		Arbre arbre = new Arbre(managerDonnees);
 		JButton actualiserArbre = new JButton("Actualiser");
 		
+		JPanel informationsCapteur = new JPanel();
+
 		titreBox.add(titre);
 		titreBox.add(Box.createVerticalStrut(10));
 		panel.add(titreBox,BorderLayout.PAGE_START);
-		panel.add(arbre,1);
+		panel.add(new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,arbre,informationsCapteur),1);
 		panel.add(actualiserArbre, BorderLayout.PAGE_END);
 		
 		actualiserArbre.addActionListener(event -> {
 			panel.remove(1);
-			panel.add(new Arbre(managerDonnees),1);
+			panel.add(new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,new Arbre(managerDonnees),informationsCapteur),1);
 			panel.revalidate();
 			panel.repaint();
 		});
-		
+		panel.setBorder(BorderFactory.createLineBorder(Color.black));
 		return panel;
 	}
 	
 	private void fenetrePrincipale() {
 		JFrame frame = new JFrame("NeoCampus");
-		JPanel base = new JPanel(new BorderLayout());
-		JPanel analysePanel = new JPanel(new BorderLayout());
+		JPanel base = new JPanel(new GridLayout(2, 1));
+		JPanel panel = new JPanel(new GridLayout(1,2));
 		JPanel arborescence = arborescenceCapteurs();
 		JPanel donnees = analyseurDonnees();
 		JPanel tempsReel = analyseurTempsReel();
 		
-		donnees.setMinimumSize(new Dimension(800, 300));
-		JSplitPane barre1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,arborescence,analysePanel);
-		JSplitPane barre2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,donnees,tempsReel);
-
-		analysePanel.add(barre2);
-		base.add(barre1);
+		panel.add(arborescence);
+		panel.add(tempsReel);
 		
+		base.add(donnees);
+		base.add(panel);
+		
+		
+
 //		JFrame parametrage
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Dimension currentScreenSize = new Dimension(1000,600); // s'on enleve frame.pack() alors c'est la taille de la fenetre 
-		frame.setSize(currentScreenSize);
+//		Dimension currentScreenSize = new Dimension(1000,600); // s'on enleve frame.pack() alors c'est la taille de la fenetre 
+//		frame.setSize(currentScreenSize);
 		frame.getContentPane().add(base);
 		frame.pack();
 		frame.setResizable(true); // l'utilisateur ne peut pas modifier la taille de la fenetre

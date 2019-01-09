@@ -45,37 +45,7 @@ public class Arbre extends JTree {
 			remplirModele(listeCapteurs);
 		}
 	}
-	//TODO refaire
-	private static void fenetreChangementSeuils(int x, int y) {
-		JFrame frame = new JFrame("SEUIL");
-		JPanel base = new JPanel(new BorderLayout());
-		JPanel boutons = new JPanel(new FlowLayout());
-		Box options = new Box(BoxLayout.Y_AXIS);
-		JPanel setMin = new JPanel(new FlowLayout());
-		JPanel setMax = new JPanel(new FlowLayout());
-		JTextField saisieMin = new JTextField();
-		
-		setMin.add(new JLabel("Seuil min"));
-		setMin.add(saisieMin);
-		setMax.add(new JLabel("Seuil max"));
-		
-		JButton accepter = new JButton("Acepter");
-		JButton canceler = new JButton("Canceler");
-		
-		options.add(setMax);
-		options.add(setMin);
-		boutons.add(accepter);
-		boutons.add(canceler);
-		
-		base.add(boutons, BorderLayout.PAGE_END);
-		base.add(options, BorderLayout.PAGE_START);
-		frame.add(base);
-		
-		frame.setMinimumSize(new Dimension(300, 200));
-		frame.setLocation(x, y);
-		frame.setVisible(true);
-		frame.setAlwaysOnTop(true);
-	}
+	
 	
 	private static class selectionListener implements TreeSelectionListener {
 
@@ -85,7 +55,7 @@ public class Arbre extends JTree {
 		    DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 		    String selectedNodeName = selectedNode.toString();
 		    if (selectedNode.isLeaf()) {
-		    	fenetreChangementSeuils(20, 20); //TODO  trouver le bon placement
+		    	//TODO construire action 
 		    }	
 		}
 		
