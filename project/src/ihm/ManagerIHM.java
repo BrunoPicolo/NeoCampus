@@ -32,9 +32,11 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.border.Border;
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -109,24 +111,38 @@ public class ManagerIHM implements Runnable {
 	 */
 	private JPanel analyseurDonnees() {
 		JPanel panel = new JPanel(new BorderLayout());
-		
 		Box options = new Box(BoxLayout.Y_AXIS);
 		graphe = new Graphe();
 		
 		JPanel choixFluide = new JPanel(new BorderLayout());
-		JComboBox<TypeCapteur> fluides = new JComboBox<>(TypeCapteur.values());
+		JComboBox<TypeCapteur> fluides = new JComboBox<>(TypeCapteur.values());getClass();
+		Box boxF1 = new Box(BoxLayout.X_AXIS);
+		Box boxF2 = new Box(BoxLayout.Y_AXIS);
+		boxF1.add(Box.createHorizontalStrut(10));
+		boxF1.add(fluides);
+		boxF1.add(Box.createHorizontalGlue());
+		boxF2.add(Box.createVerticalGlue());
+		boxF2.add(boxF1);
+		boxF2.add(Box.createVerticalGlue());
 		choixFluide.add(new JLabel("Fluide:"), BorderLayout.PAGE_START);
-		choixFluide.add(fluides, BorderLayout.CENTER);
-		
+		choixFluide.add(boxF2, BorderLayout.CENTER);
+
 		JPanel choixCapteur = new JPanel(new BorderLayout());
 		JList<Capteur> listeCapteurs = new JList<>();
+		Box boxC1 = new Box(BoxLayout.X_AXIS);
+		Box boxC2 = new Box(BoxLayout.Y_AXIS);
 		listeCapteurs.setCellRenderer(new CapteursListCellRenderer());
 		listeCapteurs.setSelectionModel(new CapteursListSelectionModel());
 		JScrollPane capteurs = new JScrollPane(listeCapteurs,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		boxC1.add(Box.createHorizontalStrut(10));
+		boxC1.add(capteurs);
+		boxC1.add(Box.createHorizontalGlue());
+		boxC2.add(Box.createVerticalGlue());
+		boxC2.add(boxC1);
+		boxC2.add(Box.createVerticalGlue());
 		choixCapteur.add(new JLabel("Capteurs(max 3)"),BorderLayout.PAGE_START);
-		choixCapteur.add(capteurs, BorderLayout.CENTER);
-	
+		choixCapteur.add(boxC2, BorderLayout.CENTER);
 		
 		// Date picker
 		UtilDateModel model = new UtilDateModel();
@@ -146,7 +162,7 @@ public class ManagerIHM implements Runnable {
 		// Fin Date Picker
 		
 		JPanel choixPeriode = new JPanel(new BorderLayout());
-		JPanel flowPanel = new JPanel(new FlowLayout());
+		JPanel flowPanel = new JPanel(new GridLayout(2, 1));
 		JButton appliquer = new JButton("Appliquer");
 		appliquer.setEnabled(false);
 		flowPanel.add(dateMin);
@@ -154,14 +170,26 @@ public class ManagerIHM implements Runnable {
 		choixPeriode.add(new Label("Periode:"), BorderLayout.PAGE_START);
 		choixPeriode.add(flowPanel, BorderLayout.LINE_START);
 		
+		Box boxButton = new Box(BoxLayout.X_AXIS);
+		boxButton.add(Box.createHorizontalGlue());
+		boxButton.add(appliquer);
+		Box boxGraphe1 = new Box(BoxLayout.X_AXIS);
+		boxGraphe1.add(Box.createHorizontalStrut(20));
+		boxGraphe1.add(graphe);
+
+		Box titre = new Box(BoxLayout.X_AXIS);
+		titre.add(new JLabel("Analyseur de données"));
+		titre.add(Box.createHorizontalGlue());
+		
+		options.add(titre);
+		options.add(Box.createVerticalStrut(5));
 		options.add(choixFluide);
 		options.add(choixCapteur);
 		options.add(choixPeriode);
-		options.add(appliquer);
-
-		panel.add(new JLabel("Analyseur de données"), BorderLayout.PAGE_START);
+		options.add(boxButton);
+		
 		panel.add(options, BorderLayout.LINE_START);
-		panel.add(graphe, BorderLayout.LINE_END);
+		panel.add(boxGraphe1, BorderLayout.CENTER);
 		
 		fluides.addItemListener(event -> {
 			if (event.getStateChange() == ItemEvent.SELECTED) {
@@ -195,18 +223,28 @@ public class ManagerIHM implements Runnable {
 		JLabel titre = new JLabel("Arborescence Capteurs");
 		Arbre arbre = new Arbre(managerDonnees);
 		JButton actualiserArbre = new JButton("Actualiser");
+		Box box = new Box(BoxLayout.X_AXIS);
 		
-		JPanel informationsCapteur = new JPanel();
+		box.add(Box.createHorizontalGlue());
+		box.add(actualiserArbre);
+		box.setBorder(BorderFactory.createLineBorder(Color.gray));
+
+		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		split.setLeftComponent(arbre);
+		split.setOneTouchExpandable(true);
+		split.setDividerLocation(250);
 
 		titreBox.add(titre);
 		titreBox.add(Box.createVerticalStrut(10));
 		panel.add(titreBox,BorderLayout.PAGE_START);
-		panel.add(new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,arbre,informationsCapteur),1);
-		panel.add(actualiserArbre, BorderLayout.PAGE_END);
+		panel.add(split,1);
+		panel.add(box, BorderLayout.PAGE_END);
 		
 		actualiserArbre.addActionListener(event -> {
 			panel.remove(1);
-			panel.add(new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,new Arbre(managerDonnees),informationsCapteur),1);
+			split.setLeftComponent(new Arbre(managerDonnees)); 
+//			split.setRightComponent(informationsCapteur); //TODO ajouter informations sur le capteur
+			panel.add(split,1);
 			panel.revalidate();
 			panel.repaint();
 		});
@@ -224,12 +262,9 @@ public class ManagerIHM implements Runnable {
 		
 		panel.add(arborescence);
 		panel.add(tempsReel);
-		
 		base.add(donnees);
 		base.add(panel);
 		
-		
-
 //		JFrame parametrage
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //		Dimension currentScreenSize = new Dimension(1000,600); // s'on enleve frame.pack() alors c'est la taille de la fenetre 
@@ -239,7 +274,6 @@ public class ManagerIHM implements Runnable {
 		frame.setResizable(true); // l'utilisateur ne peut pas modifier la taille de la fenetre
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
-		
 	}
 	
 
