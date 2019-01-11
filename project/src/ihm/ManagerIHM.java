@@ -6,11 +6,8 @@ package ihm;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-<<<<<<< HEAD
 import java.awt.Dimension;
-=======
 import java.awt.Cursor;
->>>>>>> dfa909b8924d9ad6dfa0ad9a6c15decdb149bf9f
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.event.ActionListener;
