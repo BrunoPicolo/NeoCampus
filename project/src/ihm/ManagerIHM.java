@@ -36,7 +36,11 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.JTree;
 import javax.swing.border.Border;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -221,7 +225,6 @@ public class ManagerIHM implements Runnable {
 		JPanel panel = new JPanel(new BorderLayout());
 		Box titreBox = new Box(BoxLayout.Y_AXIS);
 		JLabel titre = new JLabel("Arborescence Capteurs");
-		Arbre arbre = new Arbre(managerDonnees);
 		JButton actualiserArbre = new JButton("Actualiser");
 		Box box = new Box(BoxLayout.X_AXIS);
 		
@@ -230,10 +233,9 @@ public class ManagerIHM implements Runnable {
 		box.setBorder(BorderFactory.createLineBorder(Color.gray));
 
 		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		Arbre arbre = new Arbre(managerDonnees,split);
 		split.setLeftComponent(arbre);
-		split.setOneTouchExpandable(true);
-		split.setDividerLocation(250);
-
+		
 		titreBox.add(titre);
 		titreBox.add(Box.createVerticalStrut(10));
 		panel.add(titreBox,BorderLayout.PAGE_START);
@@ -242,7 +244,8 @@ public class ManagerIHM implements Runnable {
 		
 		actualiserArbre.addActionListener(event -> {
 			panel.remove(1);
-			split.setLeftComponent(new Arbre(managerDonnees)); 
+			Arbre nouveauArbre = new Arbre(managerDonnees,split);
+			split.setLeftComponent(nouveauArbre); 
 //			split.setRightComponent(informationsCapteur); //TODO ajouter informations sur le capteur
 			panel.add(split,1);
 			panel.revalidate();
@@ -251,6 +254,7 @@ public class ManagerIHM implements Runnable {
 		panel.setBorder(BorderFactory.createLineBorder(Color.black));
 		return panel;
 	}
+	
 	
 	private void fenetrePrincipale() {
 		JFrame frame = new JFrame("NeoCampus");
@@ -267,10 +271,10 @@ public class ManagerIHM implements Runnable {
 		
 //		JFrame parametrage
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		Dimension currentScreenSize = new Dimension(1000,600); // s'on enleve frame.pack() alors c'est la taille de la fenetre 
-//		frame.setSize(currentScreenSize);
+		frame.setSize(new Dimension(1000,600)); // s'on enleve frame.pack() alors c'est la taille de la fenetre 
+		
 		frame.getContentPane().add(base);
-		frame.pack();
+//		frame.pack();
 		frame.setResizable(true); // l'utilisateur ne peut pas modifier la taille de la fenetre
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);

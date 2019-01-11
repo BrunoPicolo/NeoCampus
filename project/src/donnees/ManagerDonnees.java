@@ -182,4 +182,9 @@ public class ManagerDonnees {
 	public void setAjoutCapteurListener(Consumer<Capteur> listener) {
 		ajoutCapteurListener = listener;
 	}
+
+	public void changerSeuilsCapteur(String nomCapteur, Double min, Double max) {
+
+		System.out.println("hijo de puta salio bien " + min +  " " + max + " " + nomCapteur);
+	}
 }

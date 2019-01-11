@@ -3,7 +3,10 @@ package ihm;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.Box;
@@ -12,6 +15,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
@@ -22,6 +27,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import com.mysql.cj.exceptions.FeatureNotAvailableException;
 import com.sun.corba.se.impl.ior.GenericTaggedComponent;
+import com.sun.org.glassfish.gmbal.ManagedAttribute;
 
 import donnees.Capteur;
 import donnees.ManagerDonnees;
@@ -34,33 +40,71 @@ public class Arbre extends JTree {
 	
 	private ManagerDonnees managerDonnees;
 	
-	public Arbre(ManagerDonnees managerDonnees) {
+	public Arbre(ManagerDonnees managerDonnees, JSplitPane split) {
 		super(modele);
 		this.managerDonnees = managerDonnees;
+
+		split.setOneTouchExpandable(true);
+		split.setDividerLocation(250);
 		this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		this.addTreeSelectionListener(new selectionListener());
+		this.addTreeSelectionListener(new SelectionListener(managerDonnees,split));
 		
 		for (TypeCapteur fluide : TypeCapteur.values()) {
 			List<Capteur> listeCapteurs = managerDonnees.getCapteursBD(fluide.toString());
 			remplirModele(listeCapteurs);
 		}
 	}
-	
-	
-	private static class selectionListener implements TreeSelectionListener {
 
+	
+	private static class SelectionListener implements TreeSelectionListener {
+		private JSplitPane split;
+		private ManagerDonnees managerDonnees;
+		private HashMap<String, Capteur> capteurMap = new HashMap<>();
+		
+		public SelectionListener(ManagerDonnees managerDonnees,JSplitPane split) {
+			this.managerDonnees = managerDonnees;
+			this.split = split;
+			for (TypeCapteur fluide : TypeCapteur.values()) {
+				List<Capteur> listeCapteurs = managerDonnees.getCapteursBD(fluide.toString());
+				for (Capteur c : listeCapteurs) 
+					capteurMap.put(c.getNom(), c);
+			}
+			
+		}
+		private JPanel infoEtChangementSeuils(ManagerDonnees managerDonnees, Capteur capteur) {
+			JPanel panel = new JPanel(new BorderLayout());
+			Box box = new Box(BoxLayout.Y_AXIS);
+			JButton changerSeuils = new JButton("Appliquer");
+			JTextField min = new JTextField(new Double(capteur.getSeuilMin()).toString());
+			JTextField max = new JTextField(new Double(capteur.getSeuilMax()).toString());
+
+			box.add(new JLabel("Bâtiment: " + capteur.getBatiment()));
+			box.add(new JLabel("Etage: " + capteur.getEtage()));
+			box.add(new JLabel("Nom: " + capteur.getNom()));
+			box.add(min);
+			box.add(max);
+			min.addActionListener(null);
+			panel.add(box, BorderLayout.CENTER);
+			panel.add(changerSeuils, BorderLayout.PAGE_END);
+			changerSeuils.addActionListener(event -> {
+				managerDonnees.changerSeuilsCapteur(capteur.getNom(),Double.parseDouble(min.getText()),Double.parseDouble(max.getText()));
+			});
+			return panel;
+		}
 		@Override
 		public void valueChanged(TreeSelectionEvent se) {
 			JTree tree = (JTree) se.getSource();
 		    DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 		    String selectedNodeName = selectedNode.toString();
 		    if (selectedNode.isLeaf()) {
-		    	//TODO construire action 
+		    	split.setOneTouchExpandable(true);
+				split.setDividerLocation(250);
+		    	split.setRightComponent(infoEtChangementSeuils(managerDonnees,capteurMap.get(selectedNodeName)));
 		    }	
 		}
-		
 	}
 	
+
 	private void construireArbreAvecString(String str) {
 			DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.modele.getRoot();
 			String[] strings = str.split("/");
@@ -110,4 +154,5 @@ public class Arbre extends JTree {
 			remplirModele(listeCapteurs);
 		}
 	}
+
 }
