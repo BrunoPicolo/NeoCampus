@@ -87,7 +87,7 @@ public class Arbre extends JTree {
 			panel.add(box, BorderLayout.CENTER);
 			panel.add(changerSeuils, BorderLayout.PAGE_END);
 			changerSeuils.addActionListener(event -> {
-				managerDonnees.changerSeuilsCapteur(capteur.getNom(),Double.parseDouble(min.getText()),Double.parseDouble(max.getText()));
+				managerDonnees.modifierSeuilCapteur(capteur.getNom(),Double.parseDouble(min.getText()),Double.parseDouble(max.getText()));
 			});
 			return panel;
 		}
