@@ -18,35 +18,40 @@ public class CapteursTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 	private static final int COL_NUM = 6;
 
-	public enum Ordre {
-		FLUIDE,
-		BATIMENT,
-		AUCUN
-	}
-	private Ordre ordreAffichage;
+	private OrdreAffichage ordreAffichage;
 	
 	private Set<Capteur> listeCapteurs;
 	
 	public CapteursTableModel(Set<Capteur> listeCapteurs) {
 		super();
 		this.listeCapteurs = listeCapteurs;
-		ordreAffichage = Ordre.AUCUN;
+		ordreAffichage = OrdreAffichage.AUCUN;
 	}
 	
 	private final Comparator<Capteur> COMPARATEUR_FLUIDE = new Comparator<Capteur>() {
+		@Override
 		public int compare(Capteur c1, Capteur c2) {
-			return c1.getType().compareTo(c2.getType());
+			int comp = c1.getType().compareTo(c2.getType());
+			if (comp != 0) return comp;
+			return c1.compareTo(c2);
 		}
 	};
 	
 	private final Comparator<Capteur> COMPARATEUR_BATIMENT = new Comparator<Capteur>() {
+		@Override
 		public int compare(Capteur c1, Capteur c2) {
-			return c1.getBatiment().compareTo(c2.getBatiment());
+			int comp = c1.getBatiment().compareTo(c2.getBatiment());
+			if (comp != 0) return comp;
+			return c1.compareTo(c2);
 		}
 	};
 	
-	public void setOrdreAffichage(Ordre ordre) {
+	public void setOrdreAffichage(OrdreAffichage ordre) {
 		ordreAffichage = ordre;
+	}
+	
+	public OrdreAffichage getOrdreAffichage() {
+		return ordreAffichage;
 	}
 	
 	@Override

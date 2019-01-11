@@ -6,12 +6,15 @@ package ihm;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.PopupMenu;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -96,8 +99,48 @@ public class ManagerIHM implements Runnable {
 		JLabel titre = new JLabel("Analyseur Temps Réel");
 		JTable tableau = new JTable(capteursTableModel);
 		tableau.setDefaultRenderer(Object.class, capteursTableCellRenderer);
-		Box titreBox= new Box(BoxLayout.Y_AXIS); //set a definir la separation entre le titre et le tableau
+		tableau.getTableHeader().addMouseListener(new MouseAdapter() {
+		    @Override
+		    public void mouseClicked(MouseEvent e) {
+		        int col = tableau.columnAtPoint(e.getPoint());
+		        String nom = tableau.getColumnName(col);
+		        switch (nom) {
+		        	case "Fluide":
+		        		if (capteursTableModel.getOrdreAffichage() == OrdreAffichage.FLUIDE) {
+		        			capteursTableModel.setOrdreAffichage(OrdreAffichage.AUCUN);
+		        		} else {
+		        			capteursTableModel.setOrdreAffichage(OrdreAffichage.FLUIDE);
+		        		}
+		        		capteursTableModel.fireTableDataChanged();
+		        		break;
+		        	case "Bâtiment":
+		        		if (capteursTableModel.getOrdreAffichage() == OrdreAffichage.BATIMENT) {
+		        			capteursTableModel.setOrdreAffichage(OrdreAffichage.AUCUN);
+		        		} else {
+		        			capteursTableModel.setOrdreAffichage(OrdreAffichage.BATIMENT);
+		        		}
+		        		capteursTableModel.fireTableDataChanged();
+		        		break;
+		        }
+		    }
+		});
+		tableau.getTableHeader().addMouseMotionListener(new MouseAdapter() {
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+				Cursor defaultCursor = Cursor.getDefaultCursor();
+				int col = tableau.columnAtPoint(e.getPoint());
+				String nom = tableau.getColumnName(col);
+				if (nom.equals("Fluide") || nom.equals("Bâtiment")) {
+					tableau.getTableHeader().setCursor(handCursor);
+				} else {
+					tableau.getTableHeader().setCursor(defaultCursor);
+				}
+			}
+		});
+		tableau.getTableHeader().setDefaultRenderer(new CapteursTableCellHeaderRenderer());
 		
+		Box titreBox = new Box(BoxLayout.Y_AXIS); //set a definir la separation entre le titre et le tableau
 		titreBox.add(titre);
 		titreBox.add(Box.createVerticalStrut(10));
 		
