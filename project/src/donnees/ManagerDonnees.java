@@ -182,4 +182,27 @@ public class ManagerDonnees {
 	public void setAjoutCapteurListener(Consumer<Capteur> listener) {
 		ajoutCapteurListener = listener;
 	}
+	
+	public void modifierSeuilCapteur (String nomCapteur, Double seuilMin, Double seuilMax){
+		String requete = "UPDATE Capteurs "
+				+ "SET SeuilMin = ?"
+				+ "SET SeuilMax = ?"
+				+ "WHERE NomCapteur = ?" ;
+		try {
+			PreparedStatement s = connexionBD.prepareStatement(requete);
+			s.setDouble(1, seuilMin);
+			s.setDouble(2, seuilMax);
+			s.setString(3, nomCapteur);
+			s.executeUpdate();
+			for ( Capteur c : capteursConnectes){
+				if (c.getNom().equals(nomCapteur)){
+					c.setSeuilMin(seuilMin);
+					c.setSeuilMax(seuilMax);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
 }
