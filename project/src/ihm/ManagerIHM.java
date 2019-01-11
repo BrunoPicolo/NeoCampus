@@ -6,13 +6,10 @@ package ihm;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Label;
-import java.awt.PopupMenu;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,22 +23,18 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.border.Border;
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
-import org.w3c.dom.events.EventException;
 
 import donnees.Capteur;
 import donnees.ManagerDonnees;
@@ -75,16 +68,18 @@ public class ManagerIHM implements Runnable {
 		this.capteursTableCellRenderer = capteursTableCellRenderer;
 	}
 	
-	// TODO changer le titre en "Port d'écoute des capteurs" ?
 	private void fenetreDeConnexion() {
-		JFrame connexion = new JFrame("Connexion");
-		String strPort = JOptionPane.showInputDialog(connexion,
-				"Numéro de port:", DEFAULT_PORT);
+		String strPort = (String) JOptionPane.showInputDialog(null,
+				"Numéro de port:",
+				"Choix du port de connexion",
+				JOptionPane.QUESTION_MESSAGE,
+				null,
+				null,
+				DEFAULT_PORT);		
 		if (strPort == null) 
 			portDEcouteCapteurs = DEFAULT_PORT;
 		else
 			portDEcouteCapteurs = Integer.parseInt(strPort);
-		connexion.dispose();
 	}
 	/**
 	 * 
@@ -151,10 +146,9 @@ public class ManagerIHM implements Runnable {
 		p.put("text.today", "Today");
 		p.put("text.month", "Month");
 		p.put("text.year", "Year");
-		Date today = new Date();
-		// TODO Gerer le temps secondes (c'est le foutoir)
-		model.setDate(today.getYear()+1900,today.getMonth(),today.getDate());
-		model2.setDate(today.getYear()+1900,today.getMonth(),today.getDate());
+		Calendar today = Calendar.getInstance();
+		model.setDate(today.get(Calendar.YEAR),today.get(Calendar.MONTH),today.get(Calendar.DAY_OF_MONTH));
+		model2.setDate(today.get(Calendar.YEAR),today.get(Calendar.MONTH),today.get(Calendar.DAY_OF_MONTH));
 		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
 		JDatePanelImpl datePanel2 = new JDatePanelImpl(model2, p);
 		JDatePickerImpl dateMin = new JDatePickerImpl(datePanel, new DateLabelFormatter());
@@ -189,25 +183,40 @@ public class ManagerIHM implements Runnable {
 		options.add(boxButton);
 		
 		panel.add(options, BorderLayout.LINE_START);
-		panel.add(boxGraphe1, BorderLayout.CENTER);
+		panel.add(boxGraphe1, BorderLayout.LINE_END);
 		
+		// Affiche les capteurs du fluide selectionne
 		fluides.addItemListener(event -> {
 			if (event.getStateChange() == ItemEvent.SELECTED) {
 				TypeCapteur type = (TypeCapteur)event.getItem();
 				itemChangedChoixFluide(type, listeCapteurs);
 			}
 		});
+		
+		// Empeche le bouton appliquer d'etre utilise sans que tout soit selectionne
 		listeCapteurs.addListSelectionListener(event -> {
 			if (!event.getValueIsAdjusting()) {
 				JList<Capteur> source = (JList<Capteur>)event.getSource();
 				int[] selections = source.getSelectedIndices();
-				appliquer.setEnabled(selections.length != 0);
+				if((dateMin.getModel().isSelected())&&(dateMax.getModel().isSelected())) {
+					appliquer.setEnabled(selections.length != 0);
+				}
 			}
 		});
+		ActionListener dateListener = event -> {
+			if((dateMin.getModel().isSelected())&&(dateMax.getModel().isSelected())&&(!listeCapteurs.isSelectionEmpty())) {
+				appliquer.setEnabled(true);
+			}	
+		};
+		dateMin.addActionListener(dateListener);
+		dateMax.addActionListener(dateListener);
+		
+		// Affiche le graphe 
 		appliquer.addActionListener(event -> {
 			 mouseClickedAppliquer(listeCapteurs.getSelectedValuesList(),dateMin,dateMax);
 		});
-		// valeurs par défaut de la liste de capteurs
+			
+		// Valeurs par défaut de la liste de capteurs
 		itemChangedChoixFluide(fluides.getItemAt(0), listeCapteurs);
 		panel.setBorder(BorderFactory.createLineBorder(Color.black));
 		return panel;
@@ -284,10 +293,15 @@ public class ManagerIHM implements Runnable {
 		Map<Capteur,List<Mesure>> donnees = new HashMap<>();
 		Date dateMini = (Date) dateMin.getModel().getValue();
 		Date dateMaxi = (Date) dateMax.getModel().getValue();
-		for (Capteur capteur : capteurs) {
-			donnees.put(capteur, this.managerDonnees.mesuresPeriode(capteur, dateMini, dateMaxi));
+		
+		if (dateMaxi.compareTo(dateMini)<=0) {
+			JOptionPane.showMessageDialog(null, "Votre date de fin doit etre après la date de début", "Attention", JOptionPane.WARNING_MESSAGE);
+		} else {
+			for (Capteur capteur : capteurs) {
+				donnees.put(capteur, this.managerDonnees.mesuresPeriode(capteur, dateMini, dateMaxi));
+			}
+			graphe.afficher(donnees);
 		}
-		graphe.afficher(donnees);
 	}
 	
 	private void itemChangedChoixFluide(TypeCapteur type, JList<Capteur> listeCapteurs) {
@@ -297,7 +311,7 @@ public class ManagerIHM implements Runnable {
 	}
 	
 	public void run() {
-		//fenetreDeConnexion();
+		fenetreDeConnexion();
 		// Mise en route du serveur
 		serveur = new Serveur(managerDonnees, portDEcouteCapteurs);
 		Thread threadServeur = new Thread(serveur);
