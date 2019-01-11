@@ -7,7 +7,7 @@ import ihm.CapteursTableModel;
  * @author bruno
  *
  */
-public class Capteur {
+public class Capteur implements Comparable<Capteur> {
 	private CapteursTableModel capteursTableModel;
 	private double seuilMin;
 	private double seuilMax; 
@@ -99,5 +99,10 @@ public class Capteur {
 			return hashCode() == capteur.hashCode();
 		}
 		return true;
+	}
+
+	@Override
+	public int compareTo(Capteur capteur) {
+		return nom.compareTo(capteur.nom);
 	}
 }
