@@ -2,7 +2,7 @@ package ihm;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.util.LinkedHashSet;
+import java.util.Set;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import donnees.Capteur;
@@ -10,9 +10,9 @@ import donnees.Capteur;
 public class CapteursTableCellRenderer extends DefaultTableCellRenderer {
 	private static final long serialVersionUID = 1L;
 	
-	private LinkedHashSet<Capteur> listeCapteurs;
+	private Set<Capteur> listeCapteurs;
 	
-	public CapteursTableCellRenderer(LinkedHashSet<Capteur> listeCapteurs) {
+	public CapteursTableCellRenderer(Set<Capteur> listeCapteurs) {
 		super();
 		this.listeCapteurs = listeCapteurs;
 	}

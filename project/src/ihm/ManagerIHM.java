@@ -13,10 +13,11 @@ import java.awt.event.ItemEvent;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -324,7 +325,7 @@ public class ManagerIHM implements Runnable {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		LinkedHashSet<Capteur> listeCapteurs = new LinkedHashSet<>();
+		Set<Capteur> listeCapteurs = new TreeSet<>();
 		// TODO declarer a l'intérieur des méthodes créant l'IHM
 		CapteursTableModel capteursTableModel = new CapteursTableModel(listeCapteurs);
 		CapteursTableCellRenderer capteursTableCellRenderer = new CapteursTableCellRenderer(listeCapteurs);

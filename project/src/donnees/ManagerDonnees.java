@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.function.Consumer;
@@ -22,7 +22,7 @@ import java.sql.*;
  */
 public class ManagerDonnees {
 	private Connection connexionBD;
-	private LinkedHashSet<Capteur> capteursConnectes;
+	private Set<Capteur> capteursConnectes;
 	private CapteursTableModel capteursTableModel;
 	private Consumer<Capteur> ajoutCapteurListener = null;
 	
@@ -33,7 +33,7 @@ public class ManagerDonnees {
 	 * @param motDePasse
 	 */
 	public ManagerDonnees(String adresse, String identifiant, String motDePasse,
-			LinkedHashSet<Capteur> capteursConnectes, CapteursTableModel capteursTableModel) { 
+			Set<Capteur> capteursConnectes, CapteursTableModel capteursTableModel) { 
 		super();
 		this.capteursConnectes = capteursConnectes;
 		this.capteursTableModel = capteursTableModel;
@@ -51,7 +51,7 @@ public class ManagerDonnees {
 		}
 	}
 	
-	public LinkedHashSet<Capteur> getCapteursConnectes() {
+	public Set<Capteur> getCapteursConnectes() {
 		return capteursConnectes;
 	}
 	
