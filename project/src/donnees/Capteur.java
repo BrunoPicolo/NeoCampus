@@ -91,4 +91,13 @@ public class Capteur {
 	public int hashCode() {
 		return 31 * (nom.hashCode() + batiment.hashCode() + etage + lieu.hashCode());
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Capteur) {
+			Capteur capteur = (Capteur)obj;
+			return hashCode() == capteur.hashCode();
+		}
+		return true;
+	}
 }
