@@ -1,11 +1,12 @@
+/*
+ * Projet S5 - NeoCampus
+ * OLLIVIER Denis, PICOLO-ORTIZ Bruno, POUJOL Elyan
+ */
+
 package ihm;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -13,11 +14,8 @@ import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
@@ -26,10 +24,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
-
-import com.mysql.cj.exceptions.FeatureNotAvailableException;
-import com.sun.corba.se.impl.ior.GenericTaggedComponent;
-import com.sun.org.glassfish.gmbal.ManagedAttribute;
 
 import donnees.Capteur;
 import donnees.ManagerDonnees;
@@ -143,7 +137,7 @@ public class Arbre extends JTree {
 	 * @param str
 	 */
 	private void construireArbreAvecString(String str) {
-			DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.modele.getRoot();
+			DefaultMutableTreeNode root = (DefaultMutableTreeNode) modele.getRoot();
 			String[] strings = str.split("/");
 			DefaultMutableTreeNode node = root;
 			int size = strings.length;

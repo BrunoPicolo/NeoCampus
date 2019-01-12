@@ -1,6 +1,8 @@
-/**
- * 
+/*
+ * Projet S5 - NeoCampus
+ * OLLIVIER Denis, PICOLO-ORTIZ Bruno, POUJOL Elyan
  */
+
 package ihm;
 
 
@@ -36,11 +38,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.JTree;
-import javax.swing.border.Border;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 
 import org.jdatepicker.impl.JDatePanelImpl;
@@ -364,7 +361,7 @@ public class ManagerIHM implements Runnable {
 	}
 	
 	public void run() {
-//		fenetreDeConnexion();
+		fenetreDeConnexion();
 		// Mise en route du serveur
 		serveur = new Serveur(managerDonnees, portDEcouteCapteurs);
 		Thread threadServeur = new Thread(serveur);
@@ -378,7 +375,6 @@ public class ManagerIHM implements Runnable {
 	 */
 	public static void main(String[] args) {
 		Set<Capteur> listeCapteurs = new TreeSet<>();
-		// TODO declarer a l'intérieur des méthodes créant l'IHM
 		CapteursTableModel capteursTableModel = new CapteursTableModel(listeCapteurs);
 		CapteursTableCellRenderer capteursTableCellRenderer = new CapteursTableCellRenderer(listeCapteurs);
 		ManagerDonnees managerDonnees = new ManagerDonnees("localhost:3306", "root", "",

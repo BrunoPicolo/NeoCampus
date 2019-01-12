@@ -1,6 +1,8 @@
-/**
- * 
+/*
+ * Projet S5 - NeoCampus
+ * OLLIVIER Denis, PICOLO-ORTIZ Bruno, POUJOL Elyan
  */
+
 package ihm;
 
 import javax.swing.table.AbstractTableModel;

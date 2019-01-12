@@ -1,6 +1,8 @@
-/**
- * 
+/*
+ * Projet S5 - NeoCampus
+ * OLLIVIER Denis, PICOLO-ORTIZ Bruno, POUJOL Elyan
  */
+
 package serveur;
 
 import java.io.IOException;
@@ -27,15 +29,6 @@ public class Serveur implements Runnable {
 		super();
 		this.managerDonnees = managerDonnees;
 		this.port = port;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean deconnexion() {
-		// TODO utile ?
-		return false;
 	}
 
 	@Override
