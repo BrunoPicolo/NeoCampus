@@ -46,7 +46,7 @@ public class ManagerDonnees {
         }
 		try {
 			this.connexionBD = DriverManager.getConnection("jdbc:mysql://" + adresse 
-					+ "/NeoCampus?serverTimezone=" + TimeZone.getDefault().getID(),
+					+ "/OLLIVIER_PICOLO_POUJOL_PROJETS5?serverTimezone=" + TimeZone.getDefault().getID(),
 					identifiant, motDePasse);
 		} catch (SQLException e) {
 			throw new Error("Probleme connexion BD: " + e.getMessage());
