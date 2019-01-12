@@ -185,9 +185,9 @@ public class ManagerDonnees {
 
 	public void modifierSeuilCapteur(String nomCapteur, Double seuilMin, Double seuilMax){
 		String requete = "UPDATE Capteurs "
-				+ "SET SeuilMin = ?"
-				+ "SET SeuilMax = ?"
-				+ "WHERE NomCapteur = ?" ;
+				+ "SET SeuilMin = ?, "
+				+ "SeuilMax = ? "
+				+ "WHERE NomCapteur = ?"; 
 		try {
 			PreparedStatement s = connexionBD.prepareStatement(requete);
 			s.setDouble(1, seuilMin);

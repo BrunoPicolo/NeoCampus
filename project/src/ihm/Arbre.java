@@ -3,6 +3,7 @@ package ihm;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
@@ -15,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -43,7 +45,6 @@ public class Arbre extends JTree {
 	public Arbre(ManagerDonnees managerDonnees, JSplitPane split) {
 		super(modele);
 		this.managerDonnees = managerDonnees;
-
 		split.setOneTouchExpandable(true);
 		split.setDividerLocation(250);
 		this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -54,7 +55,6 @@ public class Arbre extends JTree {
 			remplirModele(listeCapteurs);
 		}
 	}
-
 	
 	private static class SelectionListener implements TreeSelectionListener {
 		private JSplitPane split;
@@ -64,33 +64,67 @@ public class Arbre extends JTree {
 		public SelectionListener(ManagerDonnees managerDonnees,JSplitPane split) {
 			this.managerDonnees = managerDonnees;
 			this.split = split;
+			creationListeCapteurs();	
+		}
+		/**
+		 * Description: Création ou actualisation du Map capteurMap avec tous les capteurs de managerDonnees
+		 */
+		private void creationListeCapteurs() {
 			for (TypeCapteur fluide : TypeCapteur.values()) {
 				List<Capteur> listeCapteurs = managerDonnees.getCapteursBD(fluide.toString());
 				for (Capteur c : listeCapteurs) 
 					capteurMap.put(c.getNom(), c);
 			}
-			
 		}
+		/**
+		 * Description: Crée un JPanel pour aficher des iformations sur un capteur donné
+		 * @param managerDonnees
+		 * @param capteur
+		 * @return 
+		 */
 		private JPanel infoEtChangementSeuils(ManagerDonnees managerDonnees, Capteur capteur) {
-			JPanel panel = new JPanel(new BorderLayout());
+			Double seuilMin = Double.valueOf(capteur.getSeuilMin());
+			Double seuilMax = Double.valueOf(capteur.getSeuilMax());
+			JTextField min = new JTextField(seuilMin.toString());
+			JTextField max = new JTextField(seuilMax.toString());
+			JPanel gridPanel = new JPanel(new GridLayout(2, 2));
+			gridPanel.add(new JLabel("Seuil Min: "));
+			Box box2 = new Box(BoxLayout.Y_AXIS);
+			box2.add(Box.createVerticalStrut(20));
+			box2.add(min);
+			box2.add(Box.createVerticalStrut(5));
+			gridPanel.add(box2);
+			gridPanel.add(new JLabel("Seuil Max: "));
+			Box box3 = new Box(BoxLayout.Y_AXIS);
+			box3.add(Box.createVerticalStrut(5));
+			box3.add(max);
+			box3.add(Box.createVerticalStrut(20));
+			gridPanel.add(box3);
 			Box box = new Box(BoxLayout.Y_AXIS);
+			box.add(Box.createVerticalStrut(5));
+			box.add(new JLabel("Bâtiment:	" + capteur.getBatiment()));
+			box.add(Box.createVerticalStrut(5));
+			box.add(new JLabel("Etage:	 	" + capteur.getEtage()));
+			box.add(Box.createVerticalStrut(5));
+			box.add(new JLabel("Nom:	 	" + capteur.getNom()));
 			JButton changerSeuils = new JButton("Appliquer");
-			JTextField min = new JTextField(new Double(capteur.getSeuilMin()).toString());
-			JTextField max = new JTextField(new Double(capteur.getSeuilMax()).toString());
-
-			box.add(new JLabel("Bâtiment: " + capteur.getBatiment()));
-			box.add(new JLabel("Etage: " + capteur.getEtage()));
-			box.add(new JLabel("Nom: " + capteur.getNom()));
-			box.add(min);
-			box.add(max);
-			min.addActionListener(null);
-			panel.add(box, BorderLayout.CENTER);
-			panel.add(changerSeuils, BorderLayout.PAGE_END);
+			Box boxButton = new Box(BoxLayout.X_AXIS);
+			boxButton.add(Box.createHorizontalGlue());
+			boxButton.add(changerSeuils);
+			boxButton.add(Box.createHorizontalGlue());
+			JPanel panel = new JPanel(new BorderLayout());
+			panel.add(box, BorderLayout.PAGE_START);
+			panel.add(gridPanel,  BorderLayout.CENTER);
+			panel.add(boxButton, BorderLayout.PAGE_END);
 			changerSeuils.addActionListener(event -> {
 				managerDonnees.modifierSeuilCapteur(capteur.getNom(),Double.parseDouble(min.getText()),Double.parseDouble(max.getText()));
+				creationListeCapteurs();
 			});
 			return panel;
 		}
+		/**
+		 * Description: Ajoute un JPanel avec des informations sur un capteur dans un JSplitPane split 
+		 */
 		@Override
 		public void valueChanged(TreeSelectionEvent se) {
 			JTree tree = (JTree) se.getSource();
@@ -104,7 +138,10 @@ public class Arbre extends JTree {
 		}
 	}
 	
-
+	/**
+	 * Description: construction d'un JTree à partir d'une String contenant le chemin vers une feuille
+	 * @param str
+	 */
 	private void construireArbreAvecString(String str) {
 			DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.modele.getRoot();
 			String[] strings = str.split("/");
@@ -122,6 +159,7 @@ public class Arbre extends JTree {
 				
 			}
 	}
+	
 	
 	private int indiceFils(final DefaultMutableTreeNode node,final String valeurFils) {
 		Enumeration<DefaultMutableTreeNode> filsNode = node.children();

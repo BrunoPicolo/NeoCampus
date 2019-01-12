@@ -287,10 +287,12 @@ public class ManagerIHM implements Runnable {
 		box.add(Box.createHorizontalGlue());
 		box.add(actualiserArbre);
 		box.setBorder(BorderFactory.createLineBorder(Color.gray));
+		box.add(Box.createHorizontalGlue());
 
 		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		Arbre arbre = new Arbre(managerDonnees,split);
-		split.setLeftComponent(arbre);
+		JScrollPane treeScroll = new JScrollPane(arbre);
+		split.setLeftComponent(treeScroll);
 		
 		titreBox.add(titre);
 		titreBox.add(Box.createVerticalStrut(10));
@@ -301,8 +303,8 @@ public class ManagerIHM implements Runnable {
 		actualiserArbre.addActionListener(event -> {
 			panel.remove(1);
 			Arbre nouveauArbre = new Arbre(managerDonnees,split);
-			split.setLeftComponent(nouveauArbre); 
-//			split.setRightComponent(informationsCapteur); //TODO ajouter informations sur le capteur
+			JScrollPane newTreeScroll = new JScrollPane(nouveauArbre);
+			split.setLeftComponent(newTreeScroll);
 			panel.add(split,1);
 			panel.revalidate();
 			panel.repaint();
@@ -362,7 +364,7 @@ public class ManagerIHM implements Runnable {
 	}
 	
 	public void run() {
-		fenetreDeConnexion();
+//		fenetreDeConnexion();
 		// Mise en route du serveur
 		serveur = new Serveur(managerDonnees, portDEcouteCapteurs);
 		Thread threadServeur = new Thread(serveur);
