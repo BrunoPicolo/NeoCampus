@@ -37,14 +37,19 @@ public class Graphe extends JPanel {
 		nettoyer();
 	}
 	
+	/**
+	 * 
+	 * @param donnees
+	 */
 	public void afficher(Map<Capteur, List<Mesure>> donnees) {
 		if (donnees.isEmpty()) {
 			nettoyer();
 			return;
 		}
 		
-		dataCollection.removeAllSeries();
+		dataCollection.removeAllSeries(); 
 		TypeCapteur type = TypeCapteur.EAU; // Initialisation par défaut
+		// Récupère les données pour chaque capteur sélectionné
 		for (Capteur capteur : donnees.keySet()) {
 			TimeSeries series = new TimeSeries(capteur.getNom());
 			type = capteur.getType();
@@ -53,6 +58,7 @@ public class Graphe extends JPanel {
 			}
 			dataCollection.addSeries(series);
 		}
+		// Créé le graphe avec les données récupérées
 		graphe = ChartFactory.createTimeSeriesChart("Analyse données", "Dates de relevés", type.getUnitee(),
 				dataCollection, false, true, false);
 		XYPlot plot = graphe.getXYPlot();
@@ -64,6 +70,9 @@ public class Graphe extends JPanel {
 		repaint();
 	}
 
+	/**
+	 * Réinitialise le graphe
+	 */
 	public void nettoyer() {
 		dataCollection.removeAllSeries();
 		graphe = ChartFactory.createTimeSeriesChart("Analyse données", "Dates de relevés", "", dataCollection);

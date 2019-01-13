@@ -38,7 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-
+import javax.swing.border.Border;
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -180,7 +180,7 @@ public class ManagerIHM implements Runnable {
 		boxC2.add(Box.createVerticalGlue());
 		boxC2.add(boxC1);
 		boxC2.add(Box.createVerticalGlue());
-		choixCapteur.add(new JLabel("Capteurs(max 3)"),BorderLayout.PAGE_START);
+		choixCapteur.add(new JLabel(" Capteurs (max 3)"),BorderLayout.PAGE_START);
 		choixCapteur.add(boxC2, BorderLayout.CENTER);
 		
 		// Date picker
@@ -219,6 +219,8 @@ public class ManagerIHM implements Runnable {
 		titre.add(new JLabel("Analyseur de données"));
 		titre.add(Box.createHorizontalGlue());
 		
+		
+		options.setBorder(BorderFactory.createEmptyBorder(1, 10, 5, 5));
 		options.add(titre);
 		options.add(Box.createVerticalStrut(5));
 		options.add(choixFluide);
@@ -273,7 +275,7 @@ public class ManagerIHM implements Runnable {
 	private JPanel arborescenceCapteurs() {
 		JPanel panel = new JPanel(new BorderLayout());
 		Box titreBox = new Box(BoxLayout.Y_AXIS);
-		JLabel titre = new JLabel("Arborescence Capteurs");
+		JLabel titre = new JLabel(" Arborescence Capteurs");
 		JButton actualiserArbre = new JButton("Actualiser");
 		Box box = new Box(BoxLayout.X_AXIS);
 		
@@ -320,13 +322,12 @@ public class ManagerIHM implements Runnable {
 		base.add(donnees);
 		base.add(panel);
 		
-//		JFrame parametrage
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(new Dimension(1000,600)); // s'on enleve frame.pack() alors c'est la taille de la fenetre 
+		// Définit la taille minimale de la fenêtre : Ne peut être redimensionnée plus petite
+		frame.setMinimumSize(new Dimension(1024,768)); 
 		
 		frame.getContentPane().add(base);
-//		frame.pack();
-		frame.setResizable(true); // l'utilisateur ne peut pas modifier la taille de la fenetre
+		frame.setResizable(true); // l'utilisateur peut modifier la taille de la fenetre
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
 	}

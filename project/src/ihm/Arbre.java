@@ -36,6 +36,11 @@ public class Arbre extends JTree {
 	
 	private ManagerDonnees managerDonnees;
 	
+	/**
+	 * 
+	 * @param managerDonnees
+	 * @param split
+	 */
 	public Arbre(ManagerDonnees managerDonnees, JSplitPane split) {
 		super(modele);
 		this.managerDonnees = managerDonnees;
@@ -60,6 +65,7 @@ public class Arbre extends JTree {
 			this.split = split;
 			creationListeCapteurs();	
 		}
+		
 		/**
 		 * Description: Création ou actualisation du Map capteurMap avec tous les capteurs de managerDonnees
 		 */
@@ -70,8 +76,9 @@ public class Arbre extends JTree {
 					capteurMap.put(c.getNom(), c);
 			}
 		}
+		
 		/**
-		 * Description: Crée un JPanel pour aficher des iformations sur un capteur donné
+		 * Description: Créé un JPanel pour afficher des informations sur un capteur donné
 		 * @param managerDonnees
 		 * @param capteur
 		 * @return 
@@ -125,9 +132,10 @@ public class Arbre extends JTree {
 		    DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 		    String selectedNodeName = selectedNode.toString();
 		    if (selectedNode.isLeaf()) {
-		    	split.setOneTouchExpandable(true);
-				split.setDividerLocation(250);
-		    	split.setRightComponent(infoEtChangementSeuils(managerDonnees,capteurMap.get(selectedNodeName)));
+		    		split.setOneTouchExpandable(true);
+		    		split.setDividerLocation(250);
+		    		split.setRightComponent(infoEtChangementSeuils(managerDonnees,capteurMap.get(selectedNodeName)));
+		    		
 		    }	
 		}
 	}
@@ -154,7 +162,12 @@ public class Arbre extends JTree {
 			}
 	}
 	
-	
+	/**
+	 * 
+	 * @param node
+	 * @param valeurFils
+	 * @return
+	 */
 	private int indiceFils(final DefaultMutableTreeNode node,final String valeurFils) {
 		Enumeration<DefaultMutableTreeNode> filsNode = node.children();
 		DefaultMutableTreeNode fils = null;
@@ -169,6 +182,10 @@ public class Arbre extends JTree {
 		return index;
 	}
 
+	/**
+	 * 
+	 * @param listeCapteurs
+	 */
 	public void remplirModele(List<Capteur> listeCapteurs) {
 		StringBuilder path = new StringBuilder();
 		for (Capteur capteur : listeCapteurs) {

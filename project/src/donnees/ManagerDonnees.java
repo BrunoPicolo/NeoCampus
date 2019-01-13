@@ -115,7 +115,11 @@ public class ManagerDonnees {
 		}
 	}
 	
-	// Creation d'une classe Mesure pour le couple (Valeur,Date)
+	/**
+	 * @param capteur
+	 * @param dateMin
+	 * @param dateMax
+	 */
 	public List<Mesure> mesuresPeriode(Capteur capteur, Date dateMin, Date dateMax) {
 		String requete = 
 				"SELECT NomCapteur, Valeur, DateReleve FROM Releves "
@@ -139,6 +143,11 @@ public class ManagerDonnees {
 		return mesures;
 	}
 	
+	/**
+	 * 
+	 * @param nomFluide
+	 * @return
+	 */
 	public List<Capteur> getCapteursBD(String nomFluide) {
 		String requete = "SELECT * FROM Capteurs WHERE NomFluide = ?";
 		List<Capteur> capteurs = new ArrayList<>();
@@ -167,6 +176,10 @@ public class ManagerDonnees {
 		return capteurs;
 	}
 	
+	/**
+	 * 
+	 * @param nomCapteur
+	 */
 	public synchronized void deconnecterCapteur(String nomCapteur) {
 		for(Iterator<Capteur> capteurIter = capteursConnectes.iterator(); capteurIter.hasNext();) {
 			Capteur capteur = capteurIter.next();
@@ -177,10 +190,20 @@ public class ManagerDonnees {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param listener
+	 */
 	public void setAjoutCapteurListener(Consumer<Capteur> listener) {
 		ajoutCapteurListener = listener;
 	}
 
+	/**
+	 * 
+	 * @param nomCapteur
+	 * @param seuilMin
+	 * @param seuilMax
+	 */
 	public void modifierSeuilCapteur(String nomCapteur, Double seuilMin, Double seuilMax){
 		String requete = "UPDATE Capteurs "
 				+ "SET SeuilMin = ?, "
