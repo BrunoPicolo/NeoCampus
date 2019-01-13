@@ -5,10 +5,6 @@
 
 package donnees;
 
-/**
- * @author bruno
- *
- */
 public enum TypeCapteur {
 	EAU("m^3", 0, 10),
 	ELECTRICITE("kWh", 10, 500),

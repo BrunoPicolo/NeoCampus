@@ -18,10 +18,6 @@ import ihm.CapteursTableModel;
 
 import java.sql.*;
 
-/**
- * @author bruno
- *
- */
 public class ManagerDonnees {
 	private Connection connexionBD;
 	private Set<Capteur> capteursConnectes;

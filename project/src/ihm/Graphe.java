@@ -24,10 +24,6 @@ import donnees.Capteur;
 import donnees.Mesure;
 import donnees.TypeCapteur;
 
-/**
- * @author bruno
- *
- */
 public class Graphe extends JPanel {
 	private static final long serialVersionUID = 1L;
 	

@@ -7,11 +7,6 @@ package donnees;
 
 import ihm.CapteursTableModel;
 
-/**
- * 
- * @author bruno
- *
- */
 public class Capteur implements Comparable<Capteur> {
 	private CapteursTableModel capteursTableModel;
 	private double seuilMin;

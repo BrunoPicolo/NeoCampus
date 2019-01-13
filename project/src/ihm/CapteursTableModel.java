@@ -12,10 +12,6 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-/**
- * @author bruno
- *
- */
 public class CapteursTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 	private static final int COL_NUM = 6;

@@ -11,10 +11,6 @@ import java.net.Socket;
 
 import donnees.ManagerDonnees;
 
-/**
- * @author bruno
- *
- */
 public class Serveur implements Runnable {
 	private ManagerDonnees managerDonnees;
 	private int port;
