@@ -50,10 +50,6 @@ import donnees.Mesure;
 import donnees.TypeCapteur;
 import serveur.Serveur;
 
-/**
- * @author bruno
- *
- */
 public class ManagerIHM implements Runnable {
 	private static final int DEFAULT_PORT = 8952;
 	
