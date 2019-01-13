@@ -7,10 +7,20 @@ package donnees;
 
 import java.util.Date;
 
+/**
+ * Mesure relevée par un capteur
+ */
 public class Mesure {
+	/** Valeur relevée */
 	private Double valeur;
+	/** Date du relevé */
 	private Date date;
 
+	/**
+	 * Construit une mesure
+	 * @param valeur Valeur relevée
+	 * @param date Date du relevé
+	 */
 	public Mesure(Double valeur, Date date) {
 		this.valeur = valeur;
 		this.date = date;

@@ -19,20 +19,23 @@ import ihm.CapteursTableModel;
 import java.sql.*;
 
 /**
- * @author bruno
- *
+ * Contient les capteurs connectés à l'application et permet d'accéder à la
+ * base de données.
  */
 public class ManagerDonnees {
 	private Connection connexionBD;
+	/** Liste des capteurs connectés */
 	private Set<Capteur> capteursConnectes;
+	/** Modèle personnalisé de JTable */
 	private CapteursTableModel capteursTableModel;
+	/** Listener appellé à chaque ajout de capteur */
 	private Consumer<Capteur> ajoutCapteurListener = null;
 	
-	
 	/**
-	 * @param adresse
-	 * @param identifiant
-	 * @param motDePasse
+	 * Crée le manager de données de l'application
+	 * @param adresse Adresse de la base de données
+	 * @param identifiant Nom d'utilisateur pour se connecter à la base de données
+	 * @param motDePasse Mot de passe pour se connecter à a base de données
 	 */
 	public ManagerDonnees(String adresse, String identifiant, String motDePasse,
 			Set<Capteur> capteursConnectes, CapteursTableModel capteursTableModel) { 
@@ -58,9 +61,9 @@ public class ManagerDonnees {
 	}
 	
 	/**
-	 * 
-	 * @param nomCapteur
-	 * @param valeur
+	 * Actualise la valeur du capteur nommé par nomCapteur
+	 * @param nomCapteur Nom du capteur dont il faut actualiser la valeur actuelle
+	 * @param valeur Nouvelle valeur du capteur
 	 */
 	public synchronized void actualiserValeurCapteur(String nomCapteur, double valeur) {
 		String requete = "INSERT INTO Releves (Id, NomCapteur, Valeur, DateReleve) VALUES (NULL, ?, ?, ?)";
@@ -84,12 +87,14 @@ public class ManagerDonnees {
 	}
 	
 	/**
-	 * 
-	 * @param nom
-	 * @param batiment
-	 * @param lieu
-	 * @param etage
-	 * @param type
+	 * Crée et connecte un nouveau capteur à l'application
+	 * Stocke le nouveau capteur en base de données si il ne s'y est jamais connecté
+	 * Ajoute le capteur dans le tableau des capteurs de l'analyse en temps réel
+	 * @param nom Nom du capteur
+	 * @param batiment Batîment dans lequel se trouve le capteur
+	 * @param lieu Lieu précis où se trouve le capteur
+	 * @param etage Etage du batîment dans lequel se situe le capteur
+	 * @param type Type de fluide du capteur
 	 */
 	public synchronized void connecterCapteur(String nom, String batiment, String lieu, int etage, TypeCapteur type) {
 		String requete = 
@@ -119,7 +124,13 @@ public class ManagerDonnees {
 		}
 	}
 	
-	// Creation d'une classe Mesure pour le couple (Valeur,Date)
+	/**
+	 * Extrait les mesures relevées par un capteur sur une période donnée
+	 * @param capteur Capteur dont on veut extraire les données
+	 * @param dateMin Borne inférieure de la période
+	 * @param dateMax Borne supérieure de la période
+	 * @return Liste des mesures relevées par le capteur sur la période
+	 */
 	public List<Mesure> mesuresPeriode(Capteur capteur, Date dateMin, Date dateMax) {
 		String requete = 
 				"SELECT NomCapteur, Valeur, DateReleve FROM Releves "
@@ -143,6 +154,11 @@ public class ManagerDonnees {
 		return mesures;
 	}
 	
+	/**
+	 * Retrouve les capteur d'un certain type stockés en base de données
+	 * @param nomFluide Nom du fluide associé aux capteurs voulus
+	 * @return Liste des capteur du type de fluide voulu
+	 */
 	public List<Capteur> getCapteursBD(String nomFluide) {
 		String requete = "SELECT * FROM Capteurs WHERE NomFluide = ?";
 		List<Capteur> capteurs = new ArrayList<>();
@@ -171,6 +187,11 @@ public class ManagerDonnees {
 		return capteurs;
 	}
 	
+	/**
+	 * Supprime le capteur de la liste des capteurs connectés
+	 * Supprime le capteur du tableau de l'analyse en temps réel
+	 * @param nomCapteur Nom du capteur à déconnecter
+	 */
 	public synchronized void deconnecterCapteur(String nomCapteur) {
 		for(Iterator<Capteur> capteurIter = capteursConnectes.iterator(); capteurIter.hasNext();) {
 			Capteur capteur = capteurIter.next();
@@ -181,6 +202,10 @@ public class ManagerDonnees {
 		}
 	}
 	
+	/**
+	 * Fourni le callback appellé lors de la connexion d'un capteur
+	 * @param listener Fonction appellée à la connexion du capteur
+	 */
 	public void setAjoutCapteurListener(Consumer<Capteur> listener) {
 		ajoutCapteurListener = listener;
 	}
@@ -205,7 +230,5 @@ public class ManagerDonnees {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-
 	}
 }

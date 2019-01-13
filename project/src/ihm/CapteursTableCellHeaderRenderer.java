@@ -13,6 +13,10 @@ import javax.swing.JTable;
 
 import sun.swing.table.DefaultTableCellHeaderRenderer;
 
+/**
+ * Applique un style particulier aux colonnes "Fluide" et "Batîment" qui permettent
+ * de changer l'ordre d'apparition des capteurs dans le tableau
+ */
 public class CapteursTableCellHeaderRenderer extends DefaultTableCellHeaderRenderer {
 	private static final long serialVersionUID = 1L;
 

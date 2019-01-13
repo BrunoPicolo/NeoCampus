@@ -6,8 +6,7 @@
 package donnees;
 
 /**
- * @author bruno
- *
+ * Type de fluide d'un capteur
  */
 public enum TypeCapteur {
 	EAU("m^3", 0, 10),

@@ -8,11 +8,10 @@ package donnees;
 import ihm.CapteursTableModel;
 
 /**
- * 
- * @author bruno
- *
+ * Représente un capteurs en BD ou connecté à l'application
  */
 public class Capteur implements Comparable<Capteur> {
+	/** Modèle personnalisé de JTable */
 	private CapteursTableModel capteursTableModel;
 	private double seuilMin;
 	private double seuilMax; 
@@ -20,15 +19,18 @@ public class Capteur implements Comparable<Capteur> {
 	private String batiment;
 	private String lieu;
 	private int etage;
+	/** Type de fluide du capteur */
 	private TypeCapteur type;
+	/** Valeur actuelle du capteur */
 	private double valeur;
 	
 	/**
-	 * @param nom
-	 * @param batiment
-	 * @param lieu
-	 * @param etage
-	 * @param type
+	 * Construit un capteur
+	 * @param nom Nom du capteur
+	 * @param batiment Batîment où se situe le capteur
+	 * @param lieu Lieu précis où se trouve le capteur
+	 * @param etage Etage du batîment dans lequel se situe le capteur
+	 * @param type Type de fluide du capteur
 	 */
 	public Capteur(String nom, String batiment, String lieu, int etage, TypeCapteur type) {
 		super();
@@ -85,6 +87,11 @@ public class Capteur implements Comparable<Capteur> {
 		capteursTableModel = modele;
 	}
 	
+	/**
+	 * Actualise la valeur actuelle du capteur et la met à jour dans l'analyse
+	 * en temps réelle
+	 * @param valeur Nouvelle valeur du capteur
+	 */
 	public void actualiserValeur(double valeur) {
 		this.valeur = valeur;
 		if (capteursTableModel != null) {

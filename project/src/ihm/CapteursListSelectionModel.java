@@ -7,6 +7,9 @@ package ihm;
 
 import javax.swing.DefaultListSelectionModel;
 
+/**
+ * Force la sélection d'au plus 3 capteurs dans la liste
+ */
 public class CapteursListSelectionModel extends DefaultListSelectionModel {
 	private static final long serialVersionUID = 1L;
 

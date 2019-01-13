@@ -12,6 +12,10 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import donnees.Capteur;
 
+/**
+ * Colore les lignes des capteurs dont les valeurs relevées sont en dehors des seuils définis
+ * dans le tableau
+ */
 public class CapteursTableCellRenderer extends DefaultTableCellRenderer {
 	private static final long serialVersionUID = 1L;
 	

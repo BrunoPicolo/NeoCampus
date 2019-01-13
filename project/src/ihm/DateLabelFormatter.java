@@ -11,6 +11,9 @@ import java.util.Calendar;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
 
+/**
+ * Format d'affichage des dates pour les composants JDatePicker
+ */
 public class DateLabelFormatter extends AbstractFormatter {
 
 	private static final long serialVersionUID = 1L;

@@ -12,18 +12,17 @@ import java.net.Socket;
 import donnees.ManagerDonnees;
 
 /**
- * @author bruno
- *
+ * Serveur écoutant les capteurs sur le réseau pour recueillir les mesures relevées
+ * par ceux-ci.
  */
 public class Serveur implements Runnable {
 	private ManagerDonnees managerDonnees;
 	private int port;
 	
-	
 	/**
-	 * @param managerDonnes
-	 * @param adresse
-	 * @param port
+	 * Constructeur de la classe
+	 * @param managerDonnees Instance du manager des données de l'application
+	 * @param port Port sur lequel écouter les capteurs
 	 */
 	public Serveur(ManagerDonnees managerDonnees, int port) {
 		super();
@@ -46,6 +45,10 @@ public class Serveur implements Runnable {
 		}
 	}
 	
+	/**
+	 * Créée un nouveau thread pour traiter la requête d'un capteur
+	 * @param client Socket du capteur
+	 */
 	private void traiterConnexion(Socket client) {
 		new Thread(new TraitementCapteur(client, managerDonnees)).start();
 	}

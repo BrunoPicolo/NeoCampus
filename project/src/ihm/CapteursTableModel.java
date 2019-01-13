@@ -13,8 +13,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * @author bruno
- *
+ * Extraie les capteurs de la liste des capteurs connectés pour affichage dans le tableau
+ * de l'analyse en temps réel
  */
 public class CapteursTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
@@ -30,6 +30,9 @@ public class CapteursTableModel extends AbstractTableModel {
 		ordreAffichage = OrdreAffichage.AUCUN;
 	}
 	
+	/**
+	 * Filtre la liste des capteurs connectés pour les trier selon le type de fluide
+	 */
 	private final Comparator<Capteur> COMPARATEUR_FLUIDE = new Comparator<Capteur>() {
 		@Override
 		public int compare(Capteur c1, Capteur c2) {
@@ -39,6 +42,9 @@ public class CapteursTableModel extends AbstractTableModel {
 		}
 	};
 	
+	/**
+	 * Filtre la liste des capteurs connectés pour les trier selon le batîment
+	 */
 	private final Comparator<Capteur> COMPARATEUR_BATIMENT = new Comparator<Capteur>() {
 		@Override
 		public int compare(Capteur c1, Capteur c2) {
