@@ -13,6 +13,9 @@ import javax.swing.ListCellRenderer;
 
 import donnees.Capteur;
 
+/**
+ * Applique un style particulier aux capteurs selectionnés dans la liste
+ */
 public class CapteursListCellRenderer extends JLabel implements ListCellRenderer<Capteur> {
 	private static final long serialVersionUID = 1L;
 

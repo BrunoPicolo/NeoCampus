@@ -24,6 +24,9 @@ import donnees.Capteur;
 import donnees.Mesure;
 import donnees.TypeCapteur;
 
+/**
+ * Affiche un graphe présentant les données de capteurs
+ */
 public class Graphe extends JPanel {
 	private static final long serialVersionUID = 1L;
 	

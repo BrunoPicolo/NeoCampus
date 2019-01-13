@@ -14,15 +14,30 @@ import java.net.SocketException;
 import donnees.ManagerDonnees;
 import donnees.TypeCapteur;
 
+/**
+ * Traite la requête d'un capteur
+ */
 public class TraitementCapteur implements Runnable {
+	/** Socket du capteur */
 	private final Socket socket;
+	/** Instance du manager des données de l'application */
 	private final ManagerDonnees managerDonnees;
 	
+	/**
+	 * Constructeur de la classe
+	 * @param socket Socket du capteur
+	 * @param managerDonnees Instance du manager des données de l'application
+	 */
 	public TraitementCapteur(Socket socket, ManagerDonnees managerDonnees) {
 		this.socket = socket;
 		this.managerDonnees = managerDonnees;
 	}
 	
+	/**
+	 * Traite la requête d'un capteur
+	 * Analyse la chaîne de caractères reçue et agit en conséquence
+	 * @param requete Chaîne de caractère émise par le capteur
+	 */
 	private void traiterRequete(String requete) {
 		String[] requeteSplit = requete.split(" ");
 		if (requeteSplit.length < 2) return;
