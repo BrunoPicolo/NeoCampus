@@ -6,7 +6,10 @@
 package ihm;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +36,7 @@ import donnees.TypeCapteur;
 
 public class Arbre extends JTree {
 	private static final long serialVersionUID = 1L;
-	private static DefaultMutableTreeNode root = new DefaultMutableTreeNode("/");
+	private static DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
 	private static DefaultTreeModel modele = new DefaultTreeModel(root);
 	
 	private ManagerDonnees managerDonnees;
@@ -47,7 +50,7 @@ public class Arbre extends JTree {
 		super(modele);
 		this.managerDonnees = managerDonnees;
 		split.setOneTouchExpandable(true);
-		split.setDividerLocation(250);
+		split.setDividerLocation(300);
 		this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		this.addTreeSelectionListener(new SelectionListener(managerDonnees,split));
 		
@@ -86,11 +89,14 @@ public class Arbre extends JTree {
 		 * @return 
 		 */
 		private JPanel infoEtChangementSeuils(ManagerDonnees managerDonnees, Capteur capteur) {
-			/* Valeurs courantes des seuils */
+
+			/* Valeurs courantes des seuils */	
 			Double seuilMin = Double.valueOf(capteur.getSeuilMin());
 			Double seuilMax = Double.valueOf(capteur.getSeuilMax());
 			JTextField min = new JTextField(seuilMin.toString());
+			min.setMaximumSize(new Dimension(150, 30));
 			JTextField max = new JTextField(seuilMax.toString());
+			max.setMaximumSize(new Dimension(150, 30));
 			
 			/* Structuration de l'affichage via grille */
 			
@@ -138,12 +144,15 @@ public class Arbre extends JTree {
 			
 			/* Modifie les seuils lorsque l'on valide les changements */
 			changerSeuils.addActionListener(event -> {
-				managerDonnees.modifierSeuilCapteur(capteur.getNom(),Double.parseDouble(min.getText()),Double.parseDouble(max.getText()));
+				managerDonnees.modifierSeuilCapteur(capteur.getNom(),Double.parseDouble(min.getText()),
+						Double.parseDouble(max.getText()));
 				creationListeCapteurs();
 				JOptionPane.showMessageDialog(panel, "Modifications enregistrées");
 			});
+			
 			return panel;
 		}
+		
 		/**
 		 * Description: Ajoute un JPanel avec des informations sur un capteur dans un JSplitPane split 
 		 */
@@ -154,7 +163,7 @@ public class Arbre extends JTree {
 		    String selectedNodeName = selectedNode.toString();
 		    if (selectedNode.isLeaf()) {
 		    		split.setOneTouchExpandable(true);
-		    		split.setDividerLocation(250);
+		    		split.setDividerLocation(260);
 		    		split.setRightComponent(infoEtChangementSeuils(managerDonnees,capteurMap.get(selectedNodeName)));
 		    		
 		    }	
