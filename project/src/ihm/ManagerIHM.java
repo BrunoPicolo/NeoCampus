@@ -242,7 +242,9 @@ public class ManagerIHM implements Runnable {
 		
 		/* Titre de l'onglet */
 		Box titre = new Box(BoxLayout.X_AXIS);
-		titre.add(new JLabel("Analyseur de données"));
+		JLabel title = new JLabel("Analyseur de données");
+		title.setFont(new Font("Default",Font.BOLD, 14));
+		titre.add(title);
 		titre.add(Box.createHorizontalGlue());
 		
 		/* Assemblage des composants de l'analyse de données */
@@ -354,7 +356,7 @@ public class ManagerIHM implements Runnable {
 		frame.setMinimumSize(new Dimension(1024,768)); 
 		
 		frame.getContentPane().add(base);
-		frame.setResizable(true); // l'utilisateur peut modifier la taille de la fenetre
+		frame.setResizable(false); // l'utilisateur ne peut pas modifier la taille de la fenêtre
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
 	}
