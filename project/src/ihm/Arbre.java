@@ -6,11 +6,15 @@
 package ihm;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -31,7 +35,7 @@ import donnees.TypeCapteur;
 
 public class Arbre extends JTree {
 	private static final long serialVersionUID = 1L;
-	private static DefaultMutableTreeNode root = new DefaultMutableTreeNode("/");
+	private static DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
 	private static DefaultTreeModel modele = new DefaultTreeModel(root);
 	
 	private ManagerDonnees managerDonnees;
@@ -45,7 +49,7 @@ public class Arbre extends JTree {
 		super(modele);
 		this.managerDonnees = managerDonnees;
 		split.setOneTouchExpandable(true);
-		split.setDividerLocation(250);
+		split.setDividerLocation(300);
 		this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		this.addTreeSelectionListener(new SelectionListener(managerDonnees,split));
 		
@@ -84,44 +88,52 @@ public class Arbre extends JTree {
 		 * @return 
 		 */
 		private JPanel infoEtChangementSeuils(ManagerDonnees managerDonnees, Capteur capteur) {
+			
+			JPanel base = new JPanel(new BorderLayout());
+			JButton changerSeuils = new JButton("Appliquer");
+			Box boxButon = new Box(BoxLayout.X_AXIS);
+			boxButon.add(Box.createHorizontalGlue());
+			boxButon.add(changerSeuils);
+			boxButon.add(Box.createHorizontalGlue());
 			Double seuilMin = Double.valueOf(capteur.getSeuilMin());
 			Double seuilMax = Double.valueOf(capteur.getSeuilMax());
 			JTextField min = new JTextField(seuilMin.toString());
+			min.setMaximumSize(new Dimension(150, 30));
 			JTextField max = new JTextField(seuilMax.toString());
-			JPanel gridPanel = new JPanel(new GridLayout(2, 2));
-			gridPanel.add(new JLabel("Seuil Min: "));
-			Box box2 = new Box(BoxLayout.Y_AXIS);
-			box2.add(Box.createVerticalStrut(20));
-			box2.add(min);
-			box2.add(Box.createVerticalStrut(5));
-			gridPanel.add(box2);
-			gridPanel.add(new JLabel("Seuil Max: "));
-			Box box3 = new Box(BoxLayout.Y_AXIS);
-			box3.add(Box.createVerticalStrut(5));
-			box3.add(max);
-			box3.add(Box.createVerticalStrut(20));
-			gridPanel.add(box3);
-			Box box = new Box(BoxLayout.Y_AXIS);
-			box.add(Box.createVerticalStrut(5));
-			box.add(new JLabel("Bâtiment:	" + capteur.getBatiment()));
-			box.add(Box.createVerticalStrut(5));
-			box.add(new JLabel("Etage:	 	" + capteur.getEtage()));
-			box.add(Box.createVerticalStrut(5));
-			box.add(new JLabel("Nom:	 	" + capteur.getNom()));
-			JButton changerSeuils = new JButton("Appliquer");
-			Box boxButton = new Box(BoxLayout.X_AXIS);
-			boxButton.add(Box.createHorizontalGlue());
-			boxButton.add(changerSeuils);
-			boxButton.add(Box.createHorizontalGlue());
-			JPanel panel = new JPanel(new BorderLayout());
-			panel.add(box, BorderLayout.PAGE_START);
-			panel.add(gridPanel,  BorderLayout.CENTER);
-			panel.add(boxButton, BorderLayout.PAGE_END);
+			max.setMaximumSize(new Dimension(150, 30));
 			changerSeuils.addActionListener(event -> {
-				managerDonnees.modifierSeuilCapteur(capteur.getNom(),Double.parseDouble(min.getText()),Double.parseDouble(max.getText()));
+				managerDonnees.modifierSeuilCapteur(capteur.getNom(),Double.parseDouble(min.getText()),
+						Double.parseDouble(max.getText()));
 				creationListeCapteurs();
 			});
-			return panel;
+			base.add(boxButon, BorderLayout.PAGE_END);
+			JPanel panel = new JPanel(new BorderLayout());
+			Box box1 = new Box(BoxLayout.Y_AXIS);
+			box1.add(new JLabel(" Bâtiment:	" + capteur.getBatiment()));
+			box1.add(Box.createVerticalStrut(10));
+			box1.add(new JLabel(" Etage:	 	" + capteur.getEtage()));
+			box1.add(Box.createVerticalStrut(10));
+			box1.add(new JLabel(" Nom:	 	" + capteur.getNom()));
+			box1.add(Box.createVerticalStrut(20));
+			panel.add(box1,BorderLayout.CENTER);
+			panel.setMaximumSize(new Dimension(300, 150));
+			Box box2 = new Box(BoxLayout.Y_AXIS);
+			box2.add(Box.createVerticalStrut(30));
+			box2.add(panel);
+			box1.add(Box.createVerticalGlue());
+			Box box3 = new Box(BoxLayout.X_AXIS);
+			box3.add(new JLabel("Seuil Min: "));
+			box3.add(Box.createHorizontalStrut(10));
+			box3.add(min);
+			box2.add(box3);
+			Box box4 = new Box(BoxLayout.X_AXIS);
+			box4.add(new JLabel("Seuil Max: "));
+			box4.add(Box.createHorizontalStrut(10));
+			box4.add(max);
+			box2.add(box4);
+			box2.add(Box.createVerticalGlue());
+			base.add(box2, BorderLayout.CENTER);
+			return base;
 		}
 		/**
 		 * Description: Ajoute un JPanel avec des informations sur un capteur dans un JSplitPane split 
@@ -133,7 +145,7 @@ public class Arbre extends JTree {
 		    String selectedNodeName = selectedNode.toString();
 		    if (selectedNode.isLeaf()) {
 		    		split.setOneTouchExpandable(true);
-		    		split.setDividerLocation(250);
+		    		split.setDividerLocation(260);
 		    		split.setRightComponent(infoEtChangementSeuils(managerDonnees,capteurMap.get(selectedNodeName)));
 		    		
 		    }	

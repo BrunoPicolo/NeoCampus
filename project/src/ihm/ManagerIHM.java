@@ -9,6 +9,7 @@ package ihm;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Cursor;
 import java.awt.GridLayout;
 import java.awt.Label;
@@ -85,6 +86,7 @@ public class ManagerIHM implements Runnable {
 		else
 			portDEcouteCapteurs = Integer.parseInt(strPort);
 	}
+	
 	/**
 	 * 
 	 * @return
@@ -92,6 +94,7 @@ public class ManagerIHM implements Runnable {
 	private JPanel analyseurTempsReel() {
 		JPanel panel = new JPanel(new BorderLayout());
 		JLabel titre = new JLabel("Analyseur Temps Réel");
+		titre.setFont(new Font("Default",Font.BOLD, 14));
 		JTable tableau = new JTable(capteursTableModel);
 		tableau.setDefaultRenderer(Object.class, capteursTableCellRenderer);
 		tableau.getTableHeader().addMouseListener(new MouseAdapter() {
@@ -115,6 +118,8 @@ public class ManagerIHM implements Runnable {
 		        			capteursTableModel.setOrdreAffichage(OrdreAffichage.BATIMENT);
 		        		}
 		        		capteursTableModel.fireTableDataChanged();
+		        		break;
+		        	default: 
 		        		break;
 		        }
 		    }
@@ -143,6 +148,21 @@ public class ManagerIHM implements Runnable {
 		panel.add(new JScrollPane(tableau),BorderLayout.CENTER);
 		panel.setBorder(BorderFactory.createLineBorder(Color.black));
 		return panel;
+	}
+	/**
+	 * Crée une date sous le format JDatePiker
+	 * @return
+	 */
+	private JDatePickerImpl creationDate() {
+		UtilDateModel model = new UtilDateModel();
+		Properties p = new Properties();
+		p.put("text.today", "Today");
+		p.put("text.month", "Month");
+		p.put("text.year", "Year");
+		Calendar today = Calendar.getInstance();
+		model.setDate(today.get(Calendar.YEAR),today.get(Calendar.MONTH),today.get(Calendar.DAY_OF_MONTH));
+		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+		return (new JDatePickerImpl(datePanel, new DateLabelFormatter()));
 	}
 	/**
 	 * 
@@ -184,19 +204,8 @@ public class ManagerIHM implements Runnable {
 		choixCapteur.add(boxC2, BorderLayout.CENTER);
 		
 		// Date picker
-		UtilDateModel model = new UtilDateModel();
-		UtilDateModel model2 = new UtilDateModel();
-		Properties p = new Properties();
-		p.put("text.today", "Today");
-		p.put("text.month", "Month");
-		p.put("text.year", "Year");
-		Calendar today = Calendar.getInstance();
-		model.setDate(today.get(Calendar.YEAR),today.get(Calendar.MONTH),today.get(Calendar.DAY_OF_MONTH));
-		model2.setDate(today.get(Calendar.YEAR),today.get(Calendar.MONTH),today.get(Calendar.DAY_OF_MONTH));
-		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
-		JDatePanelImpl datePanel2 = new JDatePanelImpl(model2, p);
-		JDatePickerImpl dateMin = new JDatePickerImpl(datePanel, new DateLabelFormatter());
-		JDatePickerImpl dateMax = new JDatePickerImpl(datePanel2, new DateLabelFormatter());	
+		JDatePickerImpl dateMin = creationDate();
+		JDatePickerImpl dateMax = creationDate();	
 		// Fin Date Picker
 		
 		JPanel choixPeriode = new JPanel(new BorderLayout());
@@ -215,13 +224,15 @@ public class ManagerIHM implements Runnable {
 		boxGraphe1.add(Box.createHorizontalStrut(20));
 		boxGraphe1.add(graphe);
 
-		Box titre = new Box(BoxLayout.X_AXIS);
-		titre.add(new JLabel("Analyseur de données"));
-		titre.add(Box.createHorizontalGlue());
+		Box titreBox = new Box(BoxLayout.X_AXIS);
+		JLabel titre = new JLabel("Analyseur de données");
+		titre.setFont(new Font("Default",Font.BOLD, 14));
+		titreBox.add(titre);
+		titreBox.add(Box.createHorizontalGlue());
 		
 		
 		options.setBorder(BorderFactory.createEmptyBorder(1, 10, 5, 5));
-		options.add(titre);
+		options.add(titreBox);
 		options.add(Box.createVerticalStrut(5));
 		options.add(choixFluide);
 		options.add(choixCapteur);
@@ -276,6 +287,7 @@ public class ManagerIHM implements Runnable {
 		JPanel panel = new JPanel(new BorderLayout());
 		Box titreBox = new Box(BoxLayout.Y_AXIS);
 		JLabel titre = new JLabel(" Arborescence Capteurs");
+		titre.setFont(new Font("Default", Font.BOLD, 14));
 		JButton actualiserArbre = new JButton("Actualiser");
 		Box box = new Box(BoxLayout.X_AXIS);
 		
@@ -358,7 +370,7 @@ public class ManagerIHM implements Runnable {
 	}
 	
 	public void run() {
-		fenetreDeConnexion();
+//		fenetreDeConnexion();
 		// Mise en route du serveur
 		serveur = new Serveur(managerDonnees, portDEcouteCapteurs);
 		Thread threadServeur = new Thread(serveur);
