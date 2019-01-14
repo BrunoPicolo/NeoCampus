@@ -38,7 +38,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.border.Border;
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -57,10 +56,8 @@ public class ManagerIHM implements Runnable {
 	private ManagerDonnees managerDonnees;
 	private CapteursTableModel capteursTableModel;
 	private CapteursTableCellRenderer capteursTableCellRenderer;
-	private Serveur serveur;
 	private Graphe graphe;
 
-	
 	/**
 	 * 
 	 * @param managerDonnees
@@ -91,7 +88,7 @@ public class ManagerIHM implements Runnable {
 	 */
 	private JPanel analyseurTempsReel() {
 		JPanel panel = new JPanel(new BorderLayout());
-		JLabel titre = new JLabel("Analyseur Temps Réel");
+		JLabel titre = new JLabel(" Analyseur Temps Réel");
 		JTable tableau = new JTable(capteursTableModel);
 		tableau.setDefaultRenderer(Object.class, capteursTableCellRenderer);
 		tableau.getTableHeader().addMouseListener(new MouseAdapter() {
@@ -153,6 +150,7 @@ public class ManagerIHM implements Runnable {
 		Box options = new Box(BoxLayout.Y_AXIS);
 		graphe = new Graphe();
 		
+		/* Creation du menu de selection du fluide à analyser */
 		JPanel choixFluide = new JPanel(new BorderLayout());
 		JComboBox<TypeCapteur> fluides = new JComboBox<>(TypeCapteur.values());getClass();
 		Box boxF1 = new Box(BoxLayout.X_AXIS);
@@ -166,6 +164,7 @@ public class ManagerIHM implements Runnable {
 		choixFluide.add(new JLabel("Fluide:"), BorderLayout.PAGE_START);
 		choixFluide.add(boxF2, BorderLayout.CENTER);
 
+		/* Creation du menu de selection des capteurs à analyser */
 		JPanel choixCapteur = new JPanel(new BorderLayout());
 		JList<Capteur> listeCapteurs = new JList<>();
 		Box boxC1 = new Box(BoxLayout.X_AXIS);
@@ -183,7 +182,7 @@ public class ManagerIHM implements Runnable {
 		choixCapteur.add(new JLabel(" Capteurs (max 3)"),BorderLayout.PAGE_START);
 		choixCapteur.add(boxC2, BorderLayout.CENTER);
 		
-		// Date picker
+		/* Creation du menu de selection de la période d'analyse */
 		UtilDateModel model = new UtilDateModel();
 		UtilDateModel model2 = new UtilDateModel();
 		Properties p = new Properties();
@@ -197,41 +196,45 @@ public class ManagerIHM implements Runnable {
 		JDatePanelImpl datePanel2 = new JDatePanelImpl(model2, p);
 		JDatePickerImpl dateMin = new JDatePickerImpl(datePanel, new DateLabelFormatter());
 		JDatePickerImpl dateMax = new JDatePickerImpl(datePanel2, new DateLabelFormatter());	
-		// Fin Date Picker
-		
-		JPanel choixPeriode = new JPanel(new BorderLayout());
 		JPanel flowPanel = new JPanel(new GridLayout(2, 1));
-		JButton appliquer = new JButton("Appliquer");
-		appliquer.setEnabled(false);
 		flowPanel.add(dateMin);
 		flowPanel.add(dateMax);
+
+		/* Assemblage des composants de selection de période */
+		JPanel choixPeriode = new JPanel(new BorderLayout());
 		choixPeriode.add(new Label("Periode:"), BorderLayout.PAGE_START);
 		choixPeriode.add(flowPanel, BorderLayout.LINE_START);
 		
+		/* Creation du bouton d'application des paramètres selectionnés */
+		JButton appliquer = new JButton("Appliquer");
+		appliquer.setEnabled(false);
 		Box boxButton = new Box(BoxLayout.X_AXIS);
 		boxButton.add(Box.createHorizontalGlue());
 		boxButton.add(appliquer);
+		
+		/* Création du graphe d'analyse */
 		Box boxGraphe1 = new Box(BoxLayout.X_AXIS);
 		boxGraphe1.add(Box.createHorizontalStrut(20));
 		boxGraphe1.add(graphe);
-
+		
+		/* Titre de l'onglet */
 		Box titre = new Box(BoxLayout.X_AXIS);
 		titre.add(new JLabel("Analyseur de données"));
 		titre.add(Box.createHorizontalGlue());
 		
-		
-		options.setBorder(BorderFactory.createEmptyBorder(1, 10, 5, 5));
+		/* Assemblage des composants de l'analyse de données */
+		options.setBorder(BorderFactory.createEmptyBorder(1, 10, 5, 5)); // Definit des marges
 		options.add(titre);
+		
 		options.add(Box.createVerticalStrut(5));
 		options.add(choixFluide);
 		options.add(choixCapteur);
 		options.add(choixPeriode);
 		options.add(boxButton);
-		
 		panel.add(options, BorderLayout.LINE_START);
 		panel.add(boxGraphe1, BorderLayout.LINE_END);
 		
-		// Affiche les capteurs du fluide selectionne
+		/* Affiche les capteurs du fluide selectionne */
 		fluides.addItemListener(event -> {
 			if (event.getStateChange() == ItemEvent.SELECTED) {
 				TypeCapteur type = (TypeCapteur)event.getItem();
@@ -239,7 +242,8 @@ public class ManagerIHM implements Runnable {
 			}
 		});
 		
-		// Empeche le bouton appliquer d'etre utilise sans que tout soit selectionne
+		/* Empeche le bouton appliquer d'etre utilise sans que tout soit selectionne */
+		// Verifie que des capteurs sont selectionnés
 		listeCapteurs.addListSelectionListener(event -> {
 			if (!event.getValueIsAdjusting()) {
 				JList<Capteur> source = (JList<Capteur>)event.getSource();
@@ -254,15 +258,14 @@ public class ManagerIHM implements Runnable {
 				appliquer.setEnabled(true);
 			}	
 		};
-		dateMin.addActionListener(dateListener);
-		dateMax.addActionListener(dateListener);
+		dateMin.addActionListener(dateListener); // Verifie qu'une dateMin est selectionnée
+		dateMax.addActionListener(dateListener); // Verifie qu'une dateMax est selectionnée
 		
-		// Affiche le graphe 
-		appliquer.addActionListener(event -> {
-			 mouseClickedAppliquer(listeCapteurs.getSelectedValuesList(),dateMin,dateMax);
-		});
+		/* Affiche le graphe */ 
+		appliquer.addActionListener(event ->
+			 mouseClickedAppliquer(listeCapteurs.getSelectedValuesList(),dateMin,dateMax));
 			
-		// Valeurs par défaut de la liste de capteurs
+		/* Valeurs par défaut de la liste de capteurs */
 		itemChangedChoixFluide(fluides.getItemAt(0), listeCapteurs);
 		panel.setBorder(BorderFactory.createLineBorder(Color.black));
 		return panel;
@@ -360,7 +363,7 @@ public class ManagerIHM implements Runnable {
 	public void run() {
 		fenetreDeConnexion();
 		// Mise en route du serveur
-		serveur = new Serveur(managerDonnees, portDEcouteCapteurs);
+		Serveur serveur = new Serveur(managerDonnees, portDEcouteCapteurs);
 		Thread threadServeur = new Thread(serveur);
 		threadServeur.start();
 		fenetrePrincipale();

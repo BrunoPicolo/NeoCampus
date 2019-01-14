@@ -11,10 +11,12 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -84,42 +86,61 @@ public class Arbre extends JTree {
 		 * @return 
 		 */
 		private JPanel infoEtChangementSeuils(ManagerDonnees managerDonnees, Capteur capteur) {
+			/* Valeurs courantes des seuils */
 			Double seuilMin = Double.valueOf(capteur.getSeuilMin());
 			Double seuilMax = Double.valueOf(capteur.getSeuilMax());
 			JTextField min = new JTextField(seuilMin.toString());
 			JTextField max = new JTextField(seuilMax.toString());
-			JPanel gridPanel = new JPanel(new GridLayout(2, 2));
-			gridPanel.add(new JLabel("Seuil Min: "));
+			
+			/* Structuration de l'affichage via grille */
+			
+			JPanel gridPanel = new JPanel(new GridLayout(3, 2)); 	
+			/* Case (1,1) */
+			gridPanel.add(new JLabel("Seuil Min : "));
+			/* Case (1,2) */
 			Box box2 = new Box(BoxLayout.Y_AXIS);
-			box2.add(Box.createVerticalStrut(20));
+			box2.add(Box.createVerticalStrut(10));
 			box2.add(min);
-			box2.add(Box.createVerticalStrut(5));
+			box2.add(Box.createVerticalStrut(10));
 			gridPanel.add(box2);
-			gridPanel.add(new JLabel("Seuil Max: "));
+			/* Case (2,1) */
+			gridPanel.add(new JLabel("Seuil Max : "));
+			/* Case (2,2) */
 			Box box3 = new Box(BoxLayout.Y_AXIS);
-			box3.add(Box.createVerticalStrut(5));
+			box3.add(Box.createVerticalStrut(10));
 			box3.add(max);
-			box3.add(Box.createVerticalStrut(20));
+			box3.add(Box.createVerticalStrut(10));
 			gridPanel.add(box3);
+			
+			/* Affichage des données du capteur sélectionné */
 			Box box = new Box(BoxLayout.Y_AXIS);
 			box.add(Box.createVerticalStrut(5));
-			box.add(new JLabel("Bâtiment:	" + capteur.getBatiment()));
+			box.add(new JLabel("Bâtiment :    " + capteur.getBatiment()));
 			box.add(Box.createVerticalStrut(5));
-			box.add(new JLabel("Etage:	 	" + capteur.getEtage()));
+			box.add(new JLabel("Etage :           " + capteur.getEtage()));
 			box.add(Box.createVerticalStrut(5));
-			box.add(new JLabel("Nom:	 	" + capteur.getNom()));
+			box.add(new JLabel("Nom :             " + capteur.getNom()));
+			box.add(Box.createVerticalStrut(10));
+			
+			/* Bouton d'application des changements */
 			JButton changerSeuils = new JButton("Appliquer");
 			Box boxButton = new Box(BoxLayout.X_AXIS);
 			boxButton.add(Box.createHorizontalGlue());
 			boxButton.add(changerSeuils);
 			boxButton.add(Box.createHorizontalGlue());
+			
+			/* Assemblage des composants du panneau droit de l'arborescence */
 			JPanel panel = new JPanel(new BorderLayout());
+			panel.setBorder(BorderFactory.createEmptyBorder(1, 5, 40, 5)); // Définit des marges
 			panel.add(box, BorderLayout.PAGE_START);
 			panel.add(gridPanel,  BorderLayout.CENTER);
 			panel.add(boxButton, BorderLayout.PAGE_END);
+			
+			/* Modifie les seuils lorsque l'on valide les changements */
 			changerSeuils.addActionListener(event -> {
 				managerDonnees.modifierSeuilCapteur(capteur.getNom(),Double.parseDouble(min.getText()),Double.parseDouble(max.getText()));
 				creationListeCapteurs();
+				JOptionPane.showMessageDialog(panel, "Modifications enregistrées");
 			});
 			return panel;
 		}
