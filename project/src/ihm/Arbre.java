@@ -99,7 +99,6 @@ public class Arbre extends JTree {
 			max.setMaximumSize(new Dimension(150, 30));
 			
 			/* Structuration de l'affichage via grille */
-			
 			JPanel gridPanel = new JPanel(new GridLayout(3, 2)); 	
 			/* Case (1,1) */
 			gridPanel.add(new JLabel("Seuil Min : "));
