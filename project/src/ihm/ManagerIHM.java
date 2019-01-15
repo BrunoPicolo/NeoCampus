@@ -204,19 +204,8 @@ public class ManagerIHM implements Runnable {
 		
 
 		/* Creation du menu de selection de la période d'analyse */
-		UtilDateModel model = new UtilDateModel();
-		UtilDateModel model2 = new UtilDateModel();
-		Properties p = new Properties();
-		p.put("text.today", "Today");
-		p.put("text.month", "Month");
-		p.put("text.year", "Year");
-		Calendar today = Calendar.getInstance();
-		model.setDate(today.get(Calendar.YEAR),today.get(Calendar.MONTH),today.get(Calendar.DAY_OF_MONTH));
-		model2.setDate(today.get(Calendar.YEAR),today.get(Calendar.MONTH),today.get(Calendar.DAY_OF_MONTH));
-		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
-		JDatePanelImpl datePanel2 = new JDatePanelImpl(model2, p);
-		JDatePickerImpl dateMin = new JDatePickerImpl(datePanel, new DateLabelFormatter());
-		JDatePickerImpl dateMax = new JDatePickerImpl(datePanel2, new DateLabelFormatter());	
+		JDatePickerImpl dateMin = creationDate();
+		JDatePickerImpl dateMax = creationDate();	
 
 		JPanel flowPanel = new JPanel(new GridLayout(2, 1));
 		flowPanel.add(dateMin);
@@ -271,6 +260,7 @@ public class ManagerIHM implements Runnable {
 		// Verifie que des capteurs sont selectionnés
 		listeCapteurs.addListSelectionListener(event -> {
 			if (!event.getValueIsAdjusting()) {
+				@SuppressWarnings("unchecked")
 				JList<Capteur> source = (JList<Capteur>)event.getSource();
 				int[] selections = source.getSelectedIndices();
 				if((dateMin.getModel().isSelected())&&(dateMax.getModel().isSelected())) {
@@ -353,7 +343,7 @@ public class ManagerIHM implements Runnable {
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// Définit la taille minimale de la fenêtre : Ne peut être redimensionnée plus petite
-		frame.setMinimumSize(new Dimension(1024,768)); 
+		frame.setMinimumSize(new Dimension(1024,700)); 
 		
 		frame.getContentPane().add(base);
 		frame.setResizable(false); // l'utilisateur ne peut pas modifier la taille de la fenêtre
@@ -387,7 +377,7 @@ public class ManagerIHM implements Runnable {
 	}
 	
 	public void run() {
-//		fenetreDeConnexion();
+		fenetreDeConnexion();
 		// Mise en route du serveur
 		Serveur serveur = new Serveur(managerDonnees, portDEcouteCapteurs);
 		Thread threadServeur = new Thread(serveur);

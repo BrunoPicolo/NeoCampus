@@ -6,10 +6,8 @@
 package ihm;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Rectangle;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -174,9 +172,9 @@ public class Arbre extends JTree {
 	 * @param str
 	 */
 	private void construireArbreAvecString(String str) {
-			DefaultMutableTreeNode root = (DefaultMutableTreeNode) modele.getRoot();
+			DefaultMutableTreeNode racine = (DefaultMutableTreeNode) modele.getRoot();
 			String[] strings = str.split("/");
-			DefaultMutableTreeNode node = root;
+			DefaultMutableTreeNode node = racine;
 			int size = strings.length;
 			for (int i=0; i < size;i++) {
 				int index = indiceFils(node,strings[i]);
@@ -198,6 +196,7 @@ public class Arbre extends JTree {
 	 * @return
 	 */
 	private int indiceFils(final DefaultMutableTreeNode node,final String valeurFils) {
+		@SuppressWarnings("unchecked")
 		Enumeration<DefaultMutableTreeNode> filsNode = node.children();
 		DefaultMutableTreeNode fils = null;
 		int index = -1;
