@@ -63,7 +63,7 @@ public class Arbre extends JTree {
 		private ManagerDonnees managerDonnees;
 		private HashMap<String, Capteur> capteurMap = new HashMap<>();
 		
-		public SelectionListener(ManagerDonnees managerDonnees,JSplitPane split) {
+		public SelectionListener(ManagerDonnees managerDonnees, JSplitPane split) {
 			this.managerDonnees = managerDonnees;
 			this.split = split;
 			creationListeCapteurs();	
@@ -144,12 +144,12 @@ public class Arbre extends JTree {
 				Double minimum = Double.parseDouble(min.getText());
 				Double maximum = Double.parseDouble(max.getText());
 				if (minimum <= maximum) {
-					managerDonnees.modifierSeuilCapteur(capteur.getNom(),Double.parseDouble(min.getText()),
-							Double.parseDouble(max.getText()));
+					managerDonnees.modifierSeuilCapteur(capteur.getNom(), minimum, maximum);
 					creationListeCapteurs();
 					JOptionPane.showMessageDialog(panel, "Modifications enregistrées");
 				} else {
-					JOptionPane.showMessageDialog(panel, "Valeurs incohérents");
+					JOptionPane.showMessageDialog(panel,
+							"Valeurs incohérentes: Le seuil maximum doit être supérieur au seuil minimum.");
 				}
 			});
 			
@@ -164,10 +164,10 @@ public class Arbre extends JTree {
 			JTree tree = (JTree) se.getSource();
 		    DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 		    String selectedNodeName = selectedNode.toString();
-		    if (selectedNode.isLeaf()) {
+		    if (selectedNode.isLeaf() && capteurMap.get(selectedNodeName) != null) {
 		    		split.setOneTouchExpandable(true);
 		    		split.setDividerLocation(260);
-		    		split.setRightComponent(infoEtChangementSeuils(managerDonnees,capteurMap.get(selectedNodeName)));
+		    		split.setRightComponent(infoEtChangementSeuils(managerDonnees, capteurMap.get(selectedNodeName)));
 		    		
 		    }	
 		}

@@ -8,9 +8,9 @@
 - Création de la base de données
     * Lancer WampServer si ce n'est pas déjà fait
     * Se connecter à PHPMyAdmin dans un navigateur web à l'adresse: localhost/phpmyadmin
-        --> Le nom d'utilisateur est "root", laisser le mot de passe vide
+        - Le nom d'utilisateur est "root", laisser le mot de passe vide, appuyer sur "Exécuter"
     * Sélectionner l'onglet "Importer"
-    * Importer le fichier "script.sql"
+    * Importer le fichier "script.sql" (bouton "Parcourir")
     * Cliquer sur le bouton "Exécuter" en bas de page pour générer la BD et les tables
 
 
@@ -35,3 +35,12 @@
     * Télécharger le fichier .jar
     * Le déplacer dans NeoCampus/project/lib
     * L'ajouter dans le build path d'éclipse
+
+## Crédits
+
+- POUJOL Elyan
+- PICOLO-ORTIZ Bruno
+- OLLIVIER Denis
+
+## Github
+https://github.com/BrunoPicolo/NeoCampus

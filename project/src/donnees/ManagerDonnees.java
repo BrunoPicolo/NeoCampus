@@ -29,7 +29,7 @@ public class ManagerDonnees {
 	/** Modèle personnalisé de JTable */
 	private CapteursTableModel capteursTableModel;
 	/** Listener appellé à chaque ajout de capteur */
-	private Consumer<Capteur> ajoutCapteurListener = null;
+	// private Consumer<Capteur> ajoutCapteurListener = null; // non utilisé
 	
 	/**
 	 * Crée le manager de données de l'application
@@ -105,9 +105,9 @@ public class ManagerDonnees {
 		capteursConnectes.add(capteur);
 		capteur.setModele(capteursTableModel);
 		capteursTableModel.fireTableDataChanged();
-		if (ajoutCapteurListener != null) {
+		/* if (ajoutCapteurListener != null) {
 			ajoutCapteurListener.accept(capteur);
-		}
+		} */
 		try {
 			PreparedStatement s = connexionBD.prepareStatement(requete);
 			s.setString(1, nom);
@@ -205,13 +205,13 @@ public class ManagerDonnees {
 	}
 	
 	/**
-	 * 
-	 * Fourni le callback appellé lors de la connexion d'un capteur
+	 * Non utilisé
+	 * Fournit le callback appellé lors de la connexion d'un capteur
 	 * @param listener Fonction appellée à la connexion du capteur
 	 */
-	public void setAjoutCapteurListener(Consumer<Capteur> listener) {
+	/* public void setAjoutCapteurListener(Consumer<Capteur> listener) {
 		ajoutCapteurListener = listener;
-	}
+	} */
 
 	/**
 	 * 
