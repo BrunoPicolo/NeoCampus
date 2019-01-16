@@ -149,7 +149,7 @@ public class Arbre extends JTree {
 					creationListeCapteurs();
 					JOptionPane.showMessageDialog(panel, "Modifications enregistrées");
 				} else {
-					JOptionPane.showMessageDialog(panel, "Valeurs incorrect");
+					JOptionPane.showMessageDialog(panel, "Valeurs incohérents");
 				}
 			});
 			
