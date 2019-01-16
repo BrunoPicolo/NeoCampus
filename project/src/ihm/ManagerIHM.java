@@ -172,7 +172,7 @@ public class ManagerIHM implements Runnable {
 		
 		/* Creation du menu de selection du fluide à analyser */
 		JPanel choixFluide = new JPanel(new BorderLayout());
-		JComboBox<TypeCapteur> fluides = new JComboBox<>(TypeCapteur.values());getClass();
+		JComboBox<TypeCapteur> fluides = new JComboBox<>(TypeCapteur.values());
 		Box boxF1 = new Box(BoxLayout.X_AXIS);
 		Box boxF2 = new Box(BoxLayout.Y_AXIS);
 		boxF1.add(Box.createHorizontalStrut(10));
@@ -282,7 +282,8 @@ public class ManagerIHM implements Runnable {
 			
 		/* Valeurs par défaut de la liste de capteurs */
 		itemChangedChoixFluide(fluides.getItemAt(0), listeCapteurs);
-		panel.setBorder(BorderFactory.createLineBorder(Color.black));
+		
+		panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		return panel;
 	}
 	

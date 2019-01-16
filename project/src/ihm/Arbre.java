@@ -139,12 +139,18 @@ public class Arbre extends JTree {
 			panel.add(gridPanel,  BorderLayout.CENTER);
 			panel.add(boxButton, BorderLayout.PAGE_END);
 			
-			/* Modifie les seuils lorsque l'on valide les changements */
+			/* Modifie les seuils pour des valeurs coherentes lorsque l'on valide les changements */
 			changerSeuils.addActionListener(event -> {
-				managerDonnees.modifierSeuilCapteur(capteur.getNom(),Double.parseDouble(min.getText()),
-						Double.parseDouble(max.getText()));
-				creationListeCapteurs();
-				JOptionPane.showMessageDialog(panel, "Modifications enregistrées");
+				Double minimum = Double.parseDouble(min.getText());
+				Double maximum = Double.parseDouble(max.getText());
+				if (minimum <= maximum) {
+					managerDonnees.modifierSeuilCapteur(capteur.getNom(),Double.parseDouble(min.getText()),
+							Double.parseDouble(max.getText()));
+					creationListeCapteurs();
+					JOptionPane.showMessageDialog(panel, "Modifications enregistrées");
+				} else {
+					JOptionPane.showMessageDialog(panel, "Valeurs incorrect");
+				}
 			});
 			
 			return panel;
